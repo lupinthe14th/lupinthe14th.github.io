@@ -85,8 +85,8 @@ Ubuntu 14.04 を用います。
     1. data ファイルの作成
 
             # vi /etc/tinydns/root/data
-            .localhost.localdomain.:192.168.0.7:ns.localhost.localdomain.
-            .0.168.192.in-addr.arpa.:192.168.0.7:ns.localhost.localdomain.
+            .localhost.localdomain.::ns.localhost.localdomain.
+            .0.168.192.in-addr.arpa.::ns.localhost.localdomain.
             
             =ns.localhost.localdomain.:192.168.0.7
             =gate.localhost.localdomain.:192.168.0.1
