@@ -101,3 +101,6 @@ AUTHOR_EMAIL = 'hideosuzuki@fb4.so-net.ne.jp'
 # Tipue Search
 DIRECT_TEMPLATES = ('index', 'categories', 'authors', 'archives', 'search')
 # SEARCH_URL = 'http://lupinthe14th.github.io'
+
+# Site Brand
+# SITELOGO = 'images/logo.png'
