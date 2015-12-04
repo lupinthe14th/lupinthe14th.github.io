@@ -125,21 +125,55 @@ example.com mx
 
 ## ストレステストの結果
 
-### Statistics:
+ストレステストのパターンとして、キャッシュヒット率100%と、0%の場合でストレステス
+トを実施した。
+
+なお、前提条件として、ゾーンは２つ（正引きと逆引き）で、data の行数は、196,614で
+行った。
+
+
+### キャッシュヒット率 100% の場合
+
+キャッシュヒット率 100% の場合、つまり既にキャッシュされているドメイン名の名前解
+決の場合は以下の通り。
+
+#### Statistics:
 
 ```
-Queries sent:         222878
-Queries completed:    222878
+Queries sent:         214361
+Queries completed:    214361
 Queries lost:         0
 Run time (s):         100.000000
-Maximum throughput:   9612.000000 qps
-Lost at that point:   17.32%
+Maximum throughput:   8352.000000 qps
+Lost at that point:   0.26%
 ```
 
-### Plots
+#### Plots
 
-![rate](./images/rate.png)
-![latency](./images/latency.png)
+![rate](./images/cachehit100-rate.png)
+![latency](./images/cachehit100-latency.png)
+
+### キャッシュヒット率 0% の場合
+
+キャッシュヒット率 0% の場合、つまり全くキャッシュされていないドメイン名の名前解
+決の場合は以下の通り。
+
+#### Statistics:
+
+```
+Queries sent:         67845
+Queries completed:    67845
+Queries lost:         0
+Run time (s):         100.000000
+Maximum throughput:   1374.000000 qps
+Lost at that point:   0.00%
+```
+
+#### Plots
+
+![rate](./images/cachehit0-rate.png)
+![latency](./images/cachehit0-latency.png)
+
 
 # 参考資料
 
