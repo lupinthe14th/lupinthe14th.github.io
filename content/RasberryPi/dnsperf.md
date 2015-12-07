@@ -113,6 +113,12 @@ example.com ns
 example.com mx
 ```
 
+dnsperf で提供しているサンプルは以下にて取得可能。レコードは、 10,000,000 ある。
+
+```
+% wget ftp://ftp.nominum.com/pub/nominum//dnsperf/data/queryfile-example-current.gz
+```
+
 ## ストレステストの実行
 
 以下のコマンドを用いて、ストレステストを実行する。
