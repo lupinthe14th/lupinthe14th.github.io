@@ -115,7 +115,7 @@ example.com mx
 
 dnsperf で提供しているサンプルは以下にて取得可能。レコードは、 10,000,000 ある。
 
-```
+```console
 % wget ftp://ftp.nominum.com/pub/nominum//dnsperf/data/queryfile-example-current.gz
 ```
 
