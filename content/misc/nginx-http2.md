@@ -1,6 +1,6 @@
 Title: HTTP2 お試し
 Date: 2015-12-09 17:40
-Modified: 2015-12-09 17:40
+Modified: 2015-12-09 21:30
 Category: misc
 Tags: http2, Ubuntu, nginx, Systemworks, h2load, Hyper-V 2012 R2,
 Slug: nginx-http2
@@ -36,59 +36,51 @@ HTTP/2 が nginx 1.9.5 でサポートされた事を今更ながら知った。
 - ハイパバイザー: Hyper-V 2012 R2
 - OS: Ubuntu 
 
-    ```console
-    # cat /proc/cpuinfo
-    processor   : 0
-    vendor_id   : GenuineIntel
-    cpu family  : 6
-    model       : 60
-    model name  : Intel(R) Celeron(R) CPU G1820 @ 2.70GHz
-    stepping    : 3
-    microcode   : 0xffffffff
-    cpu MHz     : 2677.835
-    cache size  : 2048 KB
-    physical id : 0
-    siblings    : 1
-    core id     : 0
-    cpu cores   : 1
-    apicid      : 0
-    initial apicid  : 0
-    fpu     : yes
-    fpu_exception   : yes
-    cpuid level : 13
-    wp      : yes
-    flags       : fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov
-    pat pse36 clflush mmx fxsr sse sse2 ss syscall nx lm constant_tsc rep_good
-    nopl eagerfpu pni pclmulqdq ssse3 cx16 sse4_1 sse4_2 movbe popcnt xsave
-    rdrand hypervisor lahf_lm abm xsaveopt fsgsbase erms
-    bogomips    : 5355.67
-    clflush size    : 64
-    cache_alignment : 64
-    address sizes   : 39 bits physical, 48 bits virtual
-    power management:
+        # cat /proc/cpuinfo
+        processor   : 0
+        vendor_id   : GenuineIntel
+        cpu family  : 6
+        model       : 60
+        model name  : Intel(R) Celeron(R) CPU G1820 @ 2.70GHz
+        stepping    : 3
+        microcode   : 0xffffffff
+        cpu MHz     : 2677.835
+        cache size  : 2048 KB
+        physical id : 0
+        siblings    : 1
+        core id     : 0
+        cpu cores   : 1
+        apicid      : 0
+        initial apicid  : 0
+        fpu     : yes
+        fpu_exception   : yes
+        cpuid level : 13
+        wp      : yes
+        flags       : fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov
+        pat pse36 clflush mmx fxsr sse sse2 ss syscall nx lm constant_tsc rep_good
+        nopl eagerfpu pni pclmulqdq ssse3 cx16 sse4_1 sse4_2 movbe popcnt xsave
+        rdrand hypervisor lahf_lm abm xsaveopt fsgsbase erms
+        bogomips    : 5355.67
+        clflush size    : 64
+        cache_alignment : 64
+        address sizes   : 39 bits physical, 48 bits virtual
+        power management:
+        
     
-    ```
+        # free -h
+                     total       used       free     shared    buffers     cached
+        Mem:          1.9G       1.3G       689M       4.8M       116M       660M
+        -/+ buffers/cache:       526M       1.4G
+        Swap:         2.0G         0B       2.0G
     
-    ```console
-    # free -h
-                 total       used       free     shared    buffers     cached
-    Mem:          1.9G       1.3G       689M       4.8M       116M       660M
-    -/+ buffers/cache:       526M       1.4G
-    Swap:         2.0G         0B       2.0G
-    ```
+        # arch
+        x86_64
     
-    ```console
-    # arch
-    x86_64
-    ```
-    
-    ```console
-    # cat /etc/lsb-release
-    DISTRIB_ID=Ubuntu
-    DISTRIB_RELEASE=14.04
-    DISTRIB_CODENAME=trusty
-    DISTRIB_DESCRIPTION="Ubuntu 14.04.3 LTS"
-    ```
+        # cat /etc/lsb-release
+        DISTRIB_ID=Ubuntu
+        DISTRIB_RELEASE=14.04
+        DISTRIB_CODENAME=trusty
+        DISTRIB_DESCRIPTION="Ubuntu 14.04.3 LTS"
 
 ### 負荷発生元クライアント
 
@@ -96,60 +88,52 @@ HTTP/2 が nginx 1.9.5 でサポートされた事を今更ながら知った。
 - ハイパバイザー: Hyper-V 2012 R2
 - OS: lubuntu 
 
-    ```console
-    # cat /proc/cpuinfo
-    processor   : 0
-    vendor_id   : GenuineIntel
-    cpu family  : 6
-    model       : 62
-    model name  : Intel(R) Xeon(R) CPU E5-2420 v2 @ 2.20GHz
-    stepping    : 4
-    microcode   : 0xffffffff
-    cpu MHz     : 2170.472
-    cache size  : 15360 KB
-    physical id : 0
-    siblings    : 1
-    core id     : 0
-    cpu cores   : 1
-    apicid      : 0
-    initial apicid  : 0
-    fpu     : yes
-    fpu_exception   : yes
-    cpuid level : 13
-    wp      : yes
-    flags       : fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov
-    pat pse36 clflush mmx fxsr sse sse2 ss syscall nx lm constant_tsc rep_good
-    nopl eagerfpu pni pclmulqdq ssse3 cx16 sse4_1 sse4_2 popcnt aes xsave avx
-    f16c rdrand hypervisor lahf_lm fsgsbase smep erms xsaveopt
-    bugs        :
-    bogomips    : 4340.94
-    clflush size    : 64
-    cache_alignment : 64
-    address sizes   : 42 bits physical, 48 bits virtual
-    power management:
+        # cat /proc/cpuinfo
+        processor   : 0
+        vendor_id   : GenuineIntel
+        cpu family  : 6
+        model       : 62
+        model name  : Intel(R) Xeon(R) CPU E5-2420 v2 @ 2.20GHz
+        stepping    : 4
+        microcode   : 0xffffffff
+        cpu MHz     : 2170.472
+        cache size  : 15360 KB
+        physical id : 0
+        siblings    : 1
+        core id     : 0
+        cpu cores   : 1
+        apicid      : 0
+        initial apicid  : 0
+        fpu     : yes
+        fpu_exception   : yes
+        cpuid level : 13
+        wp      : yes
+        flags       : fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov
+        pat pse36 clflush mmx fxsr sse sse2 ss syscall nx lm constant_tsc rep_good
+        nopl eagerfpu pni pclmulqdq ssse3 cx16 sse4_1 sse4_2 popcnt aes xsave avx
+        f16c rdrand hypervisor lahf_lm fsgsbase smep erms xsaveopt
+        bugs        :
+        bogomips    : 4340.94
+        clflush size    : 64
+        cache_alignment : 64
+        address sizes   : 42 bits physical, 48 bits virtual
+        power management:
+    
 
-    ```
-
-    ```console
-    # free -h
-                 total       used       free     shared    buffers     cached
-    Mem:          982M       287M       694M       8.7M        23M       116M
-    -/+ buffers/cache:       147M       834M
-    Swap:         1.0G         0B       1.0G
-    ```
-
-    ```console
-    # arch
-    x86_64
-    ```
-
-    ```console
-    # cat /etc/lsb-release
-    DISTRIB_ID=Ubuntu
-    DISTRIB_RELEASE=15.04
-    DISTRIB_CODENAME=vivid
-    DISTRIB_DESCRIPTION="Ubuntu 15.04"
-    ```
+        # free -h
+                     total       used       free     shared    buffers     cached
+        Mem:          982M       287M       694M       8.7M        23M       116M
+        -/+ buffers/cache:       147M       834M
+        Swap:         1.0G         0B       1.0G
+    
+        # arch
+        x86_64
+    
+        # cat /etc/lsb-release
+        DISTRIB_ID=Ubuntu
+        DISTRIB_RELEASE=15.04
+        DISTRIB_CODENAME=vivid
+        DISTRIB_DESCRIPTION="Ubuntu 15.04"
 
 
 ## 環境構築
@@ -165,54 +149,44 @@ HTTP/2 が nginx 1.9.5 でサポートされた事を今更ながら知った。
 
     以下コマンドにて事前に必要なパッケージをインストールする。
 
-    ```console
-    $ sudo apt-get install g++ make binutils autoconf automake \
+        $ sudo apt-get install g++ make binutils autoconf automake \
                        autotools-dev libtool pkg-config zlib1g-dev \
                        libcunit1-dev libssl-dev libxml2-dev libev-dev \
                        libevent-dev libjansson-dev libjemalloc-dev cython \
                        python3-dev python-setuptools
-    ```
 
 1. ソースの取得
 
     github リポジトリから、`git clone` にて、リポジトリのクローンを作成する。
 
-    ```console
-    $ cd /usr/local/src
-    $ sudo git clone https://github.com/tatsuhiro-t/nghttp2.git
-    ```
+        $ cd /usr/local/src
+        $ sudo git clone https://github.com/tatsuhiro-t/nghttp2.git
 
 1. make
 
     `make` コマンドにて、ビルド -> インストールを行う。
 
-    ```console
-    $ cd nghttp2/
-    $ sudo autoreconf -i
-    $ sudo automake
-    $ sudo autoconf
-    $ sudo ./configure
-    $ sudo make
-    $ sudo make install
-    ```
+        $ cd nghttp2/
+        $ sudo autoreconf -i
+        $ sudo automake
+        $ sudo autoconf
+        $ sudo ./configure
+        $ sudo make
+        $ sudo make install
 
 1. ライブラリへパスを通す
 
     ホームディレクトリの `.profile` を編集してライブラリへパスを通す。
 
-    ```vim
-    LD_LIBRARY_PATH=/usr/local/lib; export LD_LIBRARY_PATH
-    ```
+        LD_LIBRARY_PATH=/usr/local/lib; export LD_LIBRARY_PATH
 
 1. h2load コマンドの確認
 
-   `.profile` 編集後、 `h2load` コマンドが実行可能か確認する。以下の様にコマンド
-   を実行し、`h2load` コマンドのヘルプが表示されることを確認する。
+    `.profile` 編集後、 `h2load` コマンドが実行可能か確認する。以下の様にコマンド
+    を実行し、`h2load` コマンドのヘルプが表示されることを確認する。
 
-   ```console
-   $ source ~/.profile
-   $ h2load --help
-   ```
+        $ source ~/.profile
+        $ h2load --help
 
 ### nginx サーバーの構築
 
@@ -224,34 +198,28 @@ nginx サーバーに、nginx 1.9.5 をソースからインストールする�
 
 1. 前提パッケージのインストール
 
-   `apt-get` にてビルドに必要なパッケージをインストールする。
+    `apt-get` にてビルドに必要なパッケージをインストールする。
 
-   ```console
-   # sudo apt-get install build-essential libc6 libpcre3 libpcre3-dev \
-                  libpcrecpp0 libssl0.9.8 libssl-dev zlib1g zlib1g-dev lsb-base
-   ```
+        # sudo apt-get install build-essential libc6 libpcre3 libpcre3-dev \
+                      libpcrecpp0 libssl0.9.8 libssl-dev zlib1g zlib1g-dev lsb-base
 
 1. ソースのダウンロードと解凍
 
     以下のコマンドでソースをダウンロードし、解凍を行う。
 
-    ```console
-    # cd /usr/local/src
-    # wget http://nginx.org/download/nginx-1.9.5.tar.gz
-    # tar xvfz nginx-1.9.5.tar.gz
-    ```
+        # cd /usr/local/src
+        # wget http://nginx.org/download/nginx-1.9.5.tar.gz
+        # tar xvfz nginx-1.9.5.tar.gz
 
 1. make
 
     以下のコマンドにて、ビルドを行う。
 
-    ```console
-    # ./configure --with-http_ssl_module \
-                  --with-http_v2_module \
-                  --with-debug
-    # make
-    # make install
-    ```
+        # ./configure --with-http_ssl_module \
+                      --with-http_v2_module \
+                      --with-debug
+        # make
+        # make install
 
 ####  nginx の設定
 
@@ -264,40 +232,38 @@ nginx サーバーに、nginx 1.9.5 をソースからインストールする�
     `listen       443 ssl http2;` を `listen       443 ssl;`
     に変更する。
 
-    ```nginx:/usr/local/nginx/conf/nginx.conf
-    worker_processes  1;
-    
-    events {
-        worker_connections  16384;
-    }
-    
-    http {
-        include       mime.types;
-        default_type  application/octet-stream;
-    
-        sendfile        on;
-    
-        keepalive_timeout  65;
-    
-        server {
-            listen       443 ssl http2;
-    
-            ssl_certificate      cert.pem;
-            ssl_certificate_key  cert.key;
-    
-            ssl_session_cache    shared:SSL:1m;
-            ssl_session_timeout  5m;
-    
-            ssl_ciphers  AESGCM:HIGH:!aNULL:!MD5;
-            ssl_prefer_server_ciphers  on;
-    
-            location / {
-                root   html;
-                index  index.html index.htm;
+        worker_processes  1;
+        
+        events {
+            worker_connections  16384;
+        }
+        
+        http {
+            include       mime.types;
+            default_type  application/octet-stream;
+        
+            sendfile        on;
+        
+            keepalive_timeout  65;
+        
+            server {
+                listen       443 ssl http2;
+        
+                ssl_certificate      cert.pem;
+                ssl_certificate_key  cert.key;
+        
+                ssl_session_cache    shared:SSL:1m;
+                ssl_session_timeout  5m;
+        
+                ssl_ciphers  AESGCM:HIGH:!aNULL:!MD5;
+                ssl_prefer_server_ciphers  on;
+        
+                location / {
+                    root   html;
+                    index  index.html index.htm;
+                }
             }
         }
-    }
-    ```
 
 1. 自己署名証明書の作成
 
@@ -306,63 +272,53 @@ nginx サーバーに、nginx 1.9.5 をソースからインストールする�
     途中、証明書要求ファイルを作成する際に入力を求められるが、FQDN のみ適切な値
     を入力する。
 
-    ```console
-    # cd /usr/local/nginx/conf/
-    # openssl genrsa 2048 > cert.key
-    # openssl req -new -key cert.key  > cert.csr
-    # openssl x509 -days 3650 -req -signkey cert.key < cert.csr > cert.pem
-    ```
+        # cd /usr/local/nginx/conf/
+        # openssl genrsa 2048 > cert.key
+        # openssl req -new -key cert.key  > cert.csr
+        # openssl x509 -days 3650 -req -signkey cert.key < cert.csr > cert.pem
 
 1. nginx Upstart の設定
 
-   Upstart に登録して自動起動および起動停止を楽に出来る様にする。
+    Upstart に登録して自動起動および起動停止を楽に出来る様にする。
 
-   `/etc/init/nginx.conf` ファイルを作成する。
+    `/etc/init/nginx.conf` ファイルを作成する。
 
-   ```vim
-    # nginx
-    
-    description "nginx http daemon"
-    author "George Shammas <georgyo@gmail.com>"
-    
-    start on (filesystem and net-device-up IFACE=lo)
-    stop on runlevel [!2345]
-    
-    env DAEMON=/usr/local/nginx/sbin/nginx
-    env PID=/var/run/nginx.pid
-    
-    expect fork
-    respawn
-    respawn limit 10 5
-    #oom never
-    
-    pre-start script
-            $DAEMON -t
-            if [ $? -ne 0 ]
-                    then exit $?
-            fi
-    end script
-    
-    exec $DAEMON
-    ```
+         # nginx
+         
+         description "nginx http daemon"
+         author "George Shammas <georgyo@gmail.com>"
+         
+         start on (filesystem and net-device-up IFACE=lo)
+         stop on runlevel [!2345]
+         
+         env DAEMON=/usr/local/nginx/sbin/nginx
+         env PID=/var/run/nginx.pid
+         
+         expect fork
+         respawn
+         respawn limit 10 5
+         #oom never
+         
+         pre-start script
+                 $DAEMON -t
+                 if [ $? -ne 0 ]
+                         then exit $?
+                 fi
+         end script
+         
+         exec $DAEMON
 
-    Upstart の設定の再読み込み
+     Upstart の設定の再読み込み
 
-    ```console
-    # initctl reload-configuration
-    ```
+         # initctl reload-configuration
 
-    Upstar Job list の確認
+     Upstar Job list の確認
 
-    ```console
-    # initctl list | grep nginx
-    ```
+         # initctl list | grep nginx
 
-    nginx の起動
+     nginx の起動
 
-    ```console
-    # initctl start nginx
-    ```
+         # initctl start nginx
 
 #### 備考: nginx 1.9.X のパッケージからのインストール
 
@@ -377,59 +333,51 @@ nginx サーバーに、nginx 1.9.5 をソースからインストールする�
 
     nginxサイトが配布するPGPキーを追加する。
 
-    ```console
-    $ curl http://nginx.org/keys/nginx_signing.key | sudo apt-key add -
-    ```
+        $ curl http://nginx.org/keys/nginx_signing.key | sudo apt-key add -
 
     リポジトリを一覧に追加する。この時、stable ではなく、 mainline を追加しま
     す。
 
-    ```console
-    $ sudo sh -c "echo 'deb http://nginx.org/packages/mainline/ubuntu/ trusty nginx' >> /etc/apt/sources.list"
-    $ sudo sh -c "echo 'deb-src http://nginx.org/packages/mainline/ubuntu/ trusty nginx' >> /etc/apt/sources.list"
-    ```
+        $ sudo sh -c "echo 'deb http://nginx.org/packages/mainline/ubuntu/ trusty nginx' >> /etc/apt/sources.list"
+        $ sudo sh -c "echo 'deb-src http://nginx.org/packages/mainline/ubuntu/ trusty nginx' >> /etc/apt/sources.list"
 
 1. インストール
 
     公式リポジトリの最新のパッケージをインストールします。
 
-    ```console
-    $ sudo apt-get update
-    $ sudo apt-get install nginx
-    ```
+        $ sudo apt-get update
+        $ sudo apt-get install nginx
 
     インストール後の設定ファイルと自己署名証明書の設定は上記の通り。
 
     今回パッケージインストールした後の `nginx -V` コマンドの結果は以下の通り。
 
-    ```console
-    $ nginx -V
-    nginx version: nginx/1.9.8
-    built by gcc 4.8.4 (Ubuntu 4.8.4-2ubuntu1~14.04)
-    built with OpenSSL 1.0.1f 6 Jan 2014
-    TLS SNI support enabled
-    configure arguments: --prefix=/etc/nginx --sbin-path=/usr/sbin/nginx
-    --conf-path=/etc/nginx/nginx.conf --error-log-path=/var/log/nginx/error.log
-    --http-log-path=/var/log/nginx/access.log --pid-path=/var/run/nginx.pid
-    --lock-path=/var/run/nginx.lock
-    --http-client-body-temp-path=/var/cache/nginx/client_temp
-    --http-proxy-temp-path=/var/cache/nginx/proxy_temp
-    --http-fastcgi-temp-path=/var/cache/nginx/fastcgi_temp
-    --http-uwsgi-temp-path=/var/cache/nginx/uwsgi_temp
-    --http-scgi-temp-path=/var/cache/nginx/scgi_temp --user=nginx --group=nginx
-    --with-http_ssl_module --with-http_realip_module --with-http_addition_module
-    --with-http_sub_module --with-http_dav_module --with-http_flv_module
-    --with-http_mp4_module --with-http_gunzip_module
-    --with-http_gzip_static_module --with-http_random_index_module
-    --with-http_secure_link_module --with-http_stub_status_module
-    --with-http_auth_request_module --with-threads --with-stream
-    --with-stream_ssl_module --with-http_slice_module --with-mail
-    --with-mail_ssl_module --with-file-aio --with-http_v2_module
-    --with-cc-opt='-g -O2 -fstack-protector --param=ssp-buffer-size=4 -Wformat
-    -Werror=format-security -Wp,-D_FORTIFY_SOURCE=2'
-    --with-ld-opt='-Wl,-Bsymbolic-functions -Wl,-z,relro -Wl,--as-needed'
-    --with-ipv6
-    ```
+        $ nginx -V
+        nginx version: nginx/1.9.8
+        built by gcc 4.8.4 (Ubuntu 4.8.4-2ubuntu1~14.04)
+        built with OpenSSL 1.0.1f 6 Jan 2014
+        TLS SNI support enabled
+        configure arguments: --prefix=/etc/nginx --sbin-path=/usr/sbin/nginx
+        --conf-path=/etc/nginx/nginx.conf --error-log-path=/var/log/nginx/error.log
+        --http-log-path=/var/log/nginx/access.log --pid-path=/var/run/nginx.pid
+        --lock-path=/var/run/nginx.lock
+        --http-client-body-temp-path=/var/cache/nginx/client_temp
+        --http-proxy-temp-path=/var/cache/nginx/proxy_temp
+        --http-fastcgi-temp-path=/var/cache/nginx/fastcgi_temp
+        --http-uwsgi-temp-path=/var/cache/nginx/uwsgi_temp
+        --http-scgi-temp-path=/var/cache/nginx/scgi_temp --user=nginx --group=nginx
+        --with-http_ssl_module --with-http_realip_module --with-http_addition_module
+        --with-http_sub_module --with-http_dav_module --with-http_flv_module
+        --with-http_mp4_module --with-http_gunzip_module
+        --with-http_gzip_static_module --with-http_random_index_module
+        --with-http_secure_link_module --with-http_stub_status_module
+        --with-http_auth_request_module --with-threads --with-stream
+        --with-stream_ssl_module --with-http_slice_module --with-mail
+        --with-mail_ssl_module --with-file-aio --with-http_v2_module
+        --with-cc-opt='-g -O2 -fstack-protector --param=ssp-buffer-size=4 -Wformat
+        -Werror=format-security -Wp,-D_FORTIFY_SOURCE=2'
+        --with-ld-opt='-Wl,-Bsymbolic-functions -Wl,-z,relro -Wl,--as-needed'
+        --with-ipv6
 
 ## ベンチマークの取得
 
@@ -443,9 +391,7 @@ nginx デフォルトの index.html (612bytes) を用いてベンチマークを
     今回構築した環境で全て成功するリクエストと失敗が発生するリクエストの境界値は
     以下コマンドにて生成したリクエストだった。
 
-    ```console
-    $ h2load -n 100000 -c 50 -m 50 https://nginx/
-    ```
+        $ h2load -n 100000 -c 50 -m 50 https://nginx/
 
     - -n: 総リクエスト数
     - -c: クライアント数
@@ -458,63 +404,59 @@ nginx デフォルトの index.html (612bytes) を用いてベンチマークを
 
     HTTP/2 の場合に取得した値は以下の通り。
 
-    ```console
-    $ h2load -n 100000 -c 50 -m 50 https://nginx/
-    starting benchmark...
-    spawning thread #0: 50 total client(s). 100000 total requests
-    TLS Protocol: TLSv1.2
-    Cipher: ECDHE-RSA-AES256-GCM-SHA384
-    Server Temp Key: ECDH P-256 256 bits
-    Application protocol: h2
-    progress: 10% done
-    progress: 20% done
-    progress: 30% done
-    progress: 40% done
-    progress: 50% done
-    progress: 60% done
-    progress: 70% done
-    progress: 80% done
-    progress: 90% done
-    progress: 100% done
-
-    finished in 3.69s, 27122.09 req/s, 19.76MB/s
-    requests: 100000 total, 100000 started, 100000 done, 100000 succeeded, 0 failed, 0 errored, 0 timeout
-    status codes: 100000 2xx, 0 3xx, 0 4xx, 0 5xx
-    traffic: 76402450 bytes total, 13400000 bytes headers (space savings 23.86%), 61200000 bytes data
-                         min         max         mean         sd        +/- sd
-    time for request:     1.09ms    283.45ms     75.19ms     32.83ms    77.78%
-    time for connect:   173.30ms       1.75s    496.19ms    487.37ms    80.00%
-    time to 1st byte:   212.51ms       1.83s    592.09ms    482.91ms    80.00%
-    req/s (client)  :     542.83      616.43      567.14       14.13    72.00%
-    ```
+        $ h2load -n 100000 -c 50 -m 50 https://nginx/
+        starting benchmark...
+        spawning thread #0: 50 total client(s). 100000 total requests
+        TLS Protocol: TLSv1.2
+        Cipher: ECDHE-RSA-AES256-GCM-SHA384
+        Server Temp Key: ECDH P-256 256 bits
+        Application protocol: h2
+        progress: 10% done
+        progress: 20% done
+        progress: 30% done
+        progress: 40% done
+        progress: 50% done
+        progress: 60% done
+        progress: 70% done
+        progress: 80% done
+        progress: 90% done
+        progress: 100% done
+    
+        finished in 3.69s, 27122.09 req/s, 19.76MB/s
+        requests: 100000 total, 100000 started, 100000 done, 100000 succeeded, 0 failed, 0 errored, 0 timeout
+        status codes: 100000 2xx, 0 3xx, 0 4xx, 0 5xx
+        traffic: 76402450 bytes total, 13400000 bytes headers (space savings 23.86%), 61200000 bytes data
+                             min         max         mean         sd        +/- sd
+        time for request:     1.09ms    283.45ms     75.19ms     32.83ms    77.78%
+        time for connect:   173.30ms       1.75s    496.19ms    487.37ms    80.00%
+        time to 1st byte:   212.51ms       1.83s    592.09ms    482.91ms    80.00%
+        req/s (client)  :     542.83      616.43      567.14       14.13    72.00%
 
 1. HTTP/1.1 でのベンチマーク
 
     HTTP/1.1 の場合に取得した値は以下の通り。
 
-    ```console
-    $ h2load -n 100000 -c 50 -m 50 https://nginx/
-    starting benchmark...
-    spawning thread #0: 50 total client(s). 100000 total requests
-    TLS Protocol: TLSv1.2
-    Cipher: ECDHE-RSA-AES256-GCM-SHA384
-    Server Temp Key: ECDH P-256 256 bits
-    Application protocol: http/1.1
-    progress: 20% done
-    progress: 30% done
-    progress: 90% done
-    progress: 100% done
-
-    finished in 2.08s, 23729.25 req/s, 19.04MB/s
-    requests: 100000 total, 73062 started, 100000 done, 49365 succeeded, 50635 failed, 50635 errored, 0 timeout
-    status codes: 49365 2xx, 0 3xx, 0 4xx, 0 5xx
-    traffic: 41526288 bytes total, 9179625 bytes headers (space savings 0.00%), 30211380 bytes data
-                         min         max         mean         sd        +/- sd
-    time for request:      916us    253.71ms     17.18ms     30.66ms    92.47%
-    time for connect:    22.45ms    165.97ms     74.17ms     43.27ms    74.00%
-    time to 1st byte:    23.37ms    174.92ms     78.54ms     45.33ms    74.00%
-    req/s (client)  :     291.79      667.97      545.61      122.03    80.00%
-    ```
+        $ h2load -n 100000 -c 50 -m 50 https://nginx/
+        starting benchmark...
+        spawning thread #0: 50 total client(s). 100000 total requests
+        TLS Protocol: TLSv1.2
+        Cipher: ECDHE-RSA-AES256-GCM-SHA384
+        Server Temp Key: ECDH P-256 256 bits
+        Application protocol: http/1.1
+        progress: 20% done
+        progress: 30% done
+        progress: 90% done
+        progress: 100% done
+    
+        finished in 2.08s, 23729.25 req/s, 19.04MB/s
+        requests: 100000 total, 73062 started, 100000 done, 49365 succeeded, 50635 failed, 50635 errored, 0 timeout
+        status codes: 49365 2xx, 0 3xx, 0 4xx, 0 5xx
+        traffic: 41526288 bytes total, 9179625 bytes headers (space savings 0.00%), 30211380 bytes data
+                             min         max         mean         sd        +/- sd
+        time for request:      916us    253.71ms     17.18ms     30.66ms    92.47%
+        time for connect:    22.45ms    165.97ms     74.17ms     43.27ms    74.00%
+        time to 1st byte:    23.37ms    174.92ms     78.54ms     45.33ms    74.00%
+        req/s (client)  :     291.79      667.97      545.61      122.03    80.00%
 
 ### ご参考
 
@@ -559,10 +501,10 @@ req/s (client)  :     968.98      968.98      968.98        0.00   100.00%
 
 HTTP/1.1 および HTTP/2 はそれぞれ以下の表の通り。
 
-|HTTP Version|Time (sec)|Requests/sec|Requests/succeeded|
-|:---:|:---:|:---:|:---:|
-|1.1|2.08|23729.25|0.49365|
-|2|3.69|27122.09|1|
+HTTP Version | Time (sec) | Requests/sec | Requests/succeeded
+------------ | ---------- | ------------ | ------------------
+1.1          | 2.08       | 23729.25     | 0.49365           
+2            | 3.69       | 27122.09     | 1                 
 
 このお試しにより得られた結果としては以下のことが言えると思う。多少荒っぽい感も否
 めないが……。
