@@ -1,6 +1,6 @@
 Title: Github SSH 接続手順 ~ 二段階認証対応 ~
 Date: 2015-11-20 15:00
-Modified: 2015-11-20 15:00
+Modified: 2015-12-08 09:38
 Category: misc
 Tags: Github, SSH, Mac,
 Slug: Github-SSHConnection
@@ -51,7 +51,12 @@ ECDSA はサポートされていないので、以下の手順にてアップ�
 % export SSH_AUTH_SOCK=$(launchctl getenv SSH_AUTH_SOCK)
 ```
 
-`vi .zshrc` で、`export PATH=/usr/local/bin/:${PATH}` で、パスを追加する。
+`.zshrc` を編集し、以下を追加する。
+
+```vim
+export PATH=/usr/local/bin/:${PATH}
+eval $(ssh-agent) > /dev/null
+```
 
 
 ## SSH 認証の公開鍵と秘密鍵の作成
@@ -103,5 +108,5 @@ shell access.
 - [GitHub Help - GitHub Enterprise  Documentation](https://help.github.com)
 - [How to Update OpenSSH on Mac OS X](http://www.dctrwatson.com/2013/07/how-to-update-openssh-on-mac-os-x/)
 - [GitHubユーザーのSSH鍵6万個を調べてみた](http://d.hatena.ne.jp/hnw/20140705)
-- [GitHubにSSH接続できるようにする方
-  法](http://qiita.com/katsukii/items/9fd5bbe822904d7cdd0a)
+- [GitHubにSSH接続できるようにする方法](http://qiita.com/katsukii/items/9fd5bbe822904d7cdd0a)
+- [Updating OpenSSH on Mac OS X 10.10 Yosemite](https://mochtu.de/2015/01/07/updating-openssh-on-mac-os-x-10-10-yosemite/)
