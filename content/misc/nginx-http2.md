@@ -1,11 +1,12 @@
-Title: HTTP2 お試し
+Title: nginx HTTP/2 お試し
 Date: 2015-12-09 17:40
 Modified: 2015-12-09 21:30
 Category: misc
 Tags: http2, Ubuntu, nginx, Systemworks, h2load, Hyper-V 2012 R2,
 Slug: nginx-http2
 Author: Hideo Suzuki
-Summary: nginx 1.9.5 で HTTP/2 がサポートされたので試しに構築してみた。
+Summary: nginx 1.9.5 で HTTP/2 がサポートされたので試しに構築してベンチマーク取
+得してみた。
 
 この記事は、[nginx Advent Calendar](http://qiita.com/advent-calendar/2015/nginx)
 2015の9日目の記事です。
