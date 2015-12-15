@@ -1,11 +1,14 @@
 Title: H2O HTTP/2 お試し
 Date: 2015-12-15 16:00
-Modified: 2015-12-15 16:00
+Modified: 2015-12-15 16:41
 Category: misc
 Tags: http2, Ubuntu, h2o, Systemworks, h2load, Hyper-V 2012 R2, lubuntu
 Slug: h2o-http2
 Author: Hideo Suzuki
 Summary: HTTP/1.x HTTP/2 に最適化された Web サーバーの実装の一つ、H2O を試しに構築してベンチマークを取得してみる。
+
+この記事は、[http2 Advent Calendar 2015](http://qiita.com/advent-calendar/2015/http2)
+の16日目の記事です。
 
 # 目次
 
