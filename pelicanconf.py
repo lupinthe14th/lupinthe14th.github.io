@@ -105,3 +105,14 @@ DIRECT_TEMPLATES = ('index', 'categories', 'authors', 'archives', 'search')
 
 # Site Brand
 # SITELOGO = 'images/logo.png'
+
+# Custom CSS
+CUSTOM_CSS = 'static/custom.css'
+
+# Tell Pelican to add 'extra/custom.css' to the output dir
+STATIC_PATHS = ['images', 'extra/custom.css']
+
+# Tell Pelican to change the path to 'static/custom.css' in the output dir
+EXTRA_PATH_METADATA = {
+    'extra/custom.css': {'path': 'static/custom.css'}
+}
