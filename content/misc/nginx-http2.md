@@ -502,7 +502,7 @@ req/s (client)  :     968.98      968.98      968.98        0.00   100.00%
 
 HTTP/1.1 および HTTP/2 はそれぞれ以下の表の通り。
 
-HTTP Version | Time (sec) | Requests/sec | Requests/succeeded
+HTTP Version | Time (sec) | Requests/sec | succeeded/Requests
 ------------ | ---------- | ------------ | ------------------
 1.1          | 2.08       | 23729.25     | 0.49365           
 2            | 3.69       | 27122.09     | 1                 
