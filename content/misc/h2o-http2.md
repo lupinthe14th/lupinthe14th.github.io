@@ -40,7 +40,7 @@ nginx HTTP/2 のベンチマークもあることだし、IoT 時代のHTTPサ�
 - `h2load` を用いてベンチマークを取得する
 - `h2load` 実行クライアント（以後、負荷発生元クライアントと表記）は、同セグメント
   で別筐体上のHyper-V 2012 R2 上の仮想サーバーに構築した lubuntu を用いる
-- SWITHING-HUB は、 1GBit/sec 規格
+- SWITHING-HUB は、 1GBits/sec 規格
 - HTTP/1.1 と HTTP/2 での接続の違いによる性能差を比べる
 
 ## 機器情報
