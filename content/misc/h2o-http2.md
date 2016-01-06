@@ -195,7 +195,7 @@ $ sudo apt-get remove --purge openssl libssl-dev
 ```console
 $ sudo su -
 # cd /usr/local/src
-# wget https://github.com/h2o/h2o/archive/v1.6.0.tar.gz
+# wget https://github.com/h2o/h2o/archive/v1.6.0.tar.gz --no-check-certificate
 # tar xfz v1.6.0.tar.gz
 # cd h2o-1.6.0/
 # cmake -DWITH_BUNDLED_SSL=on .
