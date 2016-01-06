@@ -1,12 +1,15 @@
 Title: nghttpd HTTP/2 お試し
 Date: 2015-12-17 10:30
-Modified: 2015-12-17 10:30
+Modified: 2015-12-17 11:00
 Category: misc
 Tags: http2, Ubuntu, nghttp2, nghttpd, Systemworks, h2load, Hyper-V 2012 R2, lubuntu, benchmark
 Slug: nghttpd-http2
 Author: Hideo Suzuki
 Summary: C言語のHTTP/2 server の実装の一つ、 nghttpd を試しに構築してベンチマークを取得してみる。
 Status: 
+
+この記事は、[http2 Advent Calendar 2015](http://qiita.com/advent-calendar/2015/http2)
+の17日目の記事です。
 
 # 目次
 
