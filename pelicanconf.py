@@ -10,7 +10,7 @@ PATH = 'content'
 
 TIMEZONE = 'Asia/Tokyo'
 
-DEFAULT_LANG = u'jp'
+DEFAULT_LANG = 'ja'
 
 DATE_FORMATS = {
     'en': '%a, %d %b %Y',
