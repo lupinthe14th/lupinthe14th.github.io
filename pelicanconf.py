@@ -44,8 +44,8 @@ PYGMENTS_STYLE = 'zenburn'
 MARKDOWN = {    
     'extension_configs': {
         'mdx_linkify': {},
-        'mdx_del_ins': {},
-        'markdown_checklist.extension': {},
+    #    'mdx_del_ins': {},
+    #    'markdown_checklist.extension': {},
         'markdown.extensions.sane_lists': {},
         'markdown.extensions.fenced_code': {},
         'markdown.extensions.codehilite': {'css_class': 'highlight'},
@@ -65,7 +65,9 @@ PLUGINS = [
     'gravatar',
     'tag_cloud',
     'tipue_search',
+    'i18n_subsites',
 ]
+I18N_TEMPLATES_LANG = 'ja'
 
 # sitemap
 SITEMAP = {'format': 'xml', 'priorities': {'articles': 0.5, 'indexes': 0.5,
@@ -75,9 +77,10 @@ SITEMAP = {'format': 'xml', 'priorities': {'articles': 0.5, 'indexes': 0.5,
     'monthly'}}
 
 # Theme
-THEME = './pelican-bootstrap3'
+THEME = './pelican-themes/pelican-bootstrap3'
 
 # pelican-bootstrap3 setting
+JINJA_ENVIRONMENT = {'extensions': ['jinja2.ext.i18n']}
 DISPLAY_TAGS_ON_SIDEBAR = True
 DISPLAY_TAGS_INLINE = True
 DISPLAY_CATEGORIES_ON_SIDEBAR = True
