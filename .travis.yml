@@ -5,9 +5,8 @@ branches:
   only:
     - blog
 install:
-  - pip install pelican
-  - pip install ghp-import
-  - pip install markdown
+  - pip install pipenv
+  - pipenv shell
 script:
   - make publish
   - make github
