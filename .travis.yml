@@ -1,12 +1,14 @@
 ---
+dist: xenial   # required for Python >= 3.7
 language: python
-
+python:
+  - "3.7"
 branches:
   only:
     - blog
 install:
   - pip install pipenv
-  - pipenv shell
+  - pipenv install
 script:
   - make publish
   - make github
