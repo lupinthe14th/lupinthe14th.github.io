@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 
 AUTHOR = u'Hideo Suzuki'
 SITENAME = u'engineering note'
-SITEURL = 'http://lupinthe14th.github.io'
+SITEURL = 'https://lupinthe14th.github.io'
 
 PATH = 'content'
 
@@ -25,12 +25,12 @@ AUTHOR_FEED_ATOM = None
 AUTHOR_FEED_RSS = None
 
 # Blogroll
-LINKS = (('running & climbing', 'http://running-climbing.tumblr.com', ),)
+LINKS = (('running & climbing', 'https://running-climbing.tumblr.com', ),)
 
 # Social widget
 SOCIAL = (('twitter', 'https://twitter.com/hideosuzuki2'),
           ('facebook', 'https://www.facebook.com/hideo.suzukithe13th'),
-          ('github', 'http://github.com/lupinthe14th'),)
+          ('github', 'https://github.com/lupinthe14th'),)
 
 DEFAULT_PAGINATION = 10
 
