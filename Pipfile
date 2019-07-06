@@ -24,6 +24,7 @@ mdx_del_ins = "*"
 mdx_linkify = "*"
 Pygments = "*"
 Unidecode = "*"
+typogrify = "*"
 
 [requires]
 python_version = "3.7"
