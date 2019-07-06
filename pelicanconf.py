@@ -41,9 +41,22 @@ DEFAULT_PAGINATION = 10
 PYGMENTS_STYLE = 'zenburn'
 
 # GitHub Flavored Markdown
-MARKDOWN = ['linkify', 'del_ins', 'fenced_code',
-            'codehilite(css_class=highlight)', 'tables', 'extra', 'toc']
-
+MARKDOWN = {    
+    'extension_configs': {
+        'mdx_linkify': {},
+        'mdx_del_ins': {},
+        'markdown_checklist.extension': {},
+        'markdown.extensions.sane_lists': {},
+        'markdown.extensions.fenced_code': {},
+        'markdown.extensions.codehilite': {'css_class': 'highlight'},
+        'markdown.extensions.tables': {},
+        'markdown.extensions.extra': {},
+        'markdown.extensions.toc': {},
+        'markdown.extensions.footnotes' : {},
+        'markdown.extensions.meta': {},
+    },
+    'output_format': 'html5',
+}
 # Pelican Plugins setting
 PLUGIN_PATHS = ['./pelican-plugins']
 PLUGINS = [
