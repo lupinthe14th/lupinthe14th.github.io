@@ -6,7 +6,6 @@ Tags: mastodon, aws, , USB-HDD,
 Slug: mastodon
 Author: Hideo Suzuki
 Summary: Archlinuxでmastodon
-Status: draft
 
 # 目的
 面白そうだからやってみる

@@ -6,7 +6,6 @@ Tags: raid, raid1, mdadm, USB-HDD, Rasberry Pi2
 Slug: USB-HDD boot
 Author: Hideo Suzuki
 Summary: Rasberry Pi2 のルートファイルシステムを、USB-HDD にする。ついでに、mdadm で、RAID1 構成にして、データ保存の冗長化を行う。
-Status: draft
 
 # 目的
 
