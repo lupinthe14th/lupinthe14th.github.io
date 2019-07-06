@@ -9,6 +9,8 @@ branches:
 install:
   - pip install pipenv
   - pipenv install
+  - git clone https://github.com/getpelican/pelican-themes.git
+  - git clone --recursive https://github.com/getpelican/pelican-plugins
 script:
   - make publish
   - make github
