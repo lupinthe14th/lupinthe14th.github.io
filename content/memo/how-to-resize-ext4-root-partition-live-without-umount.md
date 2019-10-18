@@ -17,7 +17,7 @@ Summary: awsで運用しているArchlinuxサーバのルートパーティシ�
 
 1. 作業前状態
 
-    ```console
+    ```
     # df -h
     ファイルシス   サイズ  使用  残り 使用% マウント位置
     dev              992M     0  992M    0% /dev
@@ -29,7 +29,7 @@ Summary: awsで運用しているArchlinuxサーバのルートパーティシ�
     tmpfs            200M     0  200M    0% /run/user/0
     ```
 
-    ```console
+    ```
     # lsblk
     NAME    MAJ:MIN RM SIZE RO TYPE MOUNTPOINT
     xvda    202:0    0  32G  0 disk
@@ -42,7 +42,7 @@ Summary: awsで運用しているArchlinuxサーバのルートパーティシ�
 
 1. `resize2fs` で拡張（失敗）
 
-    ```console
+    ```
     # resize2fs /dev/xvda1
     resize2fs 1.43.4 (31-Jan-2017)
     The filesystem is already 4194048 (4k) blocks long.  Nothing to do!
@@ -54,7 +54,7 @@ Summary: awsで運用しているArchlinuxサーバのルートパーティシ�
 
 1. `growpart` でパーティションを拡張
 
-    ```console
+    ```
     # growpart /dev/xvda 1
     NOCHANGE: partition 1 could only be grown by -32125898 [fudge=20480]
     ```
@@ -67,7 +67,7 @@ Summary: awsで運用しているArchlinuxサーバのルートパーティシ�
 
 1. `fdisk` でパーティションを拡張
 
-    ```console
+    ```
     # fdisk /dev/xvda
 
     fdisk (util-linux 2.29.2) へようこそ。
@@ -132,11 +132,11 @@ Summary: awsで運用しているArchlinuxサーバのルートパーティシ�
 
     リブートプロセスで強制的に `fsck` を実行させるため以下コマンドを実行します。
 
-    ```console
+    ```
     # touch /forcefsck
     ```
 
-    ```console
+    ```
     # reboot
     ```
 
@@ -144,7 +144,7 @@ Summary: awsで運用しているArchlinuxサーバのルートパーティシ�
 
     `reboot` 後、`resize2fs` コマンドでファイルシステムを拡張する。
 
-    ```console
+    ```
     # resize2fs /dev/xvda1
     resize2fs 1.43.4 (31-Jan-2017)
     Filesystem at /dev/xvda1 is mounted on /; on-line resizing required
@@ -153,7 +153,7 @@ Summary: awsで運用しているArchlinuxサーバのルートパーティシ�
 
     ```
 
-    ```console
+    ```
     # df -h
     ファイルシス   サイズ  使用  残り 使用% マウント位置
     dev              992M     0  992M    0% /dev
