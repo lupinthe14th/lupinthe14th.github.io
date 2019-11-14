@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom"><title>engineering note - DIY</title><link href="https://lupinthe14th.github.io/" rel="alternate"></link><link href="https://lupinthe14th.github.io/feeds/diy.atom.xml" rel="self"></link><id>https://lupinthe14th.github.io/</id><updated>2015-12-17T17:00:00+09:00</updated><entry><title>アルコールストーブDIY</title><link href="https://lupinthe14th.github.io/alcoholStove.html" rel="alternate"></link><published>2013-09-07T22:37:00+09:00</published><updated>2015-12-17T17:00:00+09:00</updated><author><name>Hideo Suzuki</name></author><id>tag:lupinthe14th.github.io,2013-09-07:/alcoholStove.html</id><summary type="html">アルコールストーブを DIY してみた。</summary><content type="html">&lt;p&gt;アルコールストーブをDIYしてみた。&lt;/p&gt;
+&lt;p&gt;&lt;a class="reference external" href="http://alcanstove.exblog.jp/6264123/"&gt;アルコールストーブを創ろう  //  展開図（治具）＆説明 : アルコールストーブを創ろ
+う&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;を参考に。&lt;/p&gt;
+&lt;table class="docutils field-list" frame="void" rules="none"&gt;
+&lt;col class="field-name" /&gt;
+&lt;col class="field-body" /&gt;
+&lt;tbody valign="top"&gt;
+&lt;tr class="field"&gt;&lt;th class="field-name"&gt;材料費:&lt;/th&gt;&lt;td class="field-body"&gt;タリーズコーヒーアルミ缶×２＝￥250-（値引きで）&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class="field"&gt;&lt;th class="field-name"&gt;道具:&lt;/th&gt;&lt;td class="field-body"&gt;千枚通しみたいなのプラスドライバー大小カッターはさみラジオペンチ&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class="field"&gt;&lt;th class="field-name"&gt;工数:&lt;/th&gt;&lt;td class="field-body"&gt;4時間&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;div class="figure"&gt;
+&lt;img alt="Photo 1" src="./images/alcoholStove-Photo-1.jpg" /&gt;
+&lt;p class="caption"&gt;材料はタリーズのアルミコーヒー缶&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;中身は美味しく頂きます。
+フィルムをはがして洗って軽く乾燥させて。&lt;/p&gt;
+&lt;div class="figure"&gt;
+&lt;img alt="Photo 2" src="./images/alcoholStove-Photo-2.jpg" /&gt;
+&lt;p class="caption"&gt;できあがり。やすりとか持ってないのでバリは雑にしか取ってません。&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="figure"&gt;
+&lt;img alt="Photo 3" src="./images/alcoholStove-Photo-3.jpg" /&gt;
+&lt;p class="caption"&gt;こんな感じで燃焼してくれました。&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;なかなかの炎を出してくれてます。&lt;/p&gt;
+&lt;div class="figure"&gt;
+&lt;img alt="Photo 4" src="./images/alcoholStove-Photo-4.jpg" /&gt;
+&lt;p class="caption"&gt;沸騰実験。&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;燃料アルコール 20ml くらいでシェラカップに 200ml の水を入れて沸かしてみましたが、
+沸騰手前で火は消えました。
+30ml くらい突っ込めばいけるかな？
+時間は計るのを忘れましたが 5 分くらいでしょうか。
+今度、何かの折につかってみよう。&lt;/p&gt;
+</content><category term="DIY"></category><category term="Alcohol Stove"></category><category term="Outdoor"></category></entry></feed>

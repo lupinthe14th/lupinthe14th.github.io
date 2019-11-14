@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom"><title>engineering note - memo</title><link href="https://lupinthe14th.github.io/" rel="alternate"></link><link href="https://lupinthe14th.github.io/feeds/memo.atom.xml" rel="self"></link><id>https://lupinthe14th.github.io/</id><updated>2019-11-14T22:06:00+09:00</updated><entry><title>npm releasing</title><link href="https://lupinthe14th.github.io/npm-releasing.html" rel="alternate"></link><published>2019-11-14T21:11:00+09:00</published><updated>2019-11-14T22:06:00+09:00</updated><author><name>Hideo Suzuki</name></author><id>tag:lupinthe14th.github.io,2019-11-14:/npm-releasing.html</id><summary type="html">&lt;p&gt;npm package の継続的リリース作業をTravis ci使って自動化したのに動かなくなったので直したメモ&lt;/p&gt;</summary><content type="html">&lt;div class="toc"&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="#trigger"&gt;Trigger&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="#tldr"&gt;TL;DR&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="#process"&gt;Process&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="#seealso"&gt;SeeAlso&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;h1 id="trigger"&gt;Trigger&lt;/h1&gt;
+&lt;p&gt;そろそろパッチ当てたのリリースしようかと思って、・・・tag打てばCD走るよな・・・と思い &lt;code&gt;git tag&lt;/code&gt; 使ったけどCD走る気配がなく・・・&lt;/p&gt;
+&lt;h1 id="tldr"&gt;TL;DR&lt;/h1&gt;
+&lt;p&gt;&lt;code&gt;.travis.yml&lt;/code&gt; のbranchesの定義を追加した為、動かなかった。動くよう修正したのは以下。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;---&lt;/span&gt;
+&lt;span class="nl"&gt;language&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;node_js&lt;/span&gt;
+&lt;span class="nl"&gt;node_js&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+  &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="s"&gt;&amp;quot;10&amp;quot;&lt;/span&gt;
+  &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="s"&gt;&amp;quot;node&amp;quot;&lt;/span&gt;
+  &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="s"&gt;&amp;quot;lts/*&amp;quot;&lt;/span&gt;
+&lt;span class="nl"&gt;branches&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+  &lt;span class="nl"&gt;only&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+    &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;master&lt;/span&gt;
+    &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;develop&lt;/span&gt;
+    &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="o"&gt;/^&lt;/span&gt;&lt;span class="n"&gt;greenkeeper&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="err"&gt;$&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;
+    &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="o"&gt;/^&lt;/span&gt;&lt;span class="n"&gt;v&lt;/span&gt;&lt;span class="o"&gt;?&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mi"&gt;9&lt;/span&gt;&lt;span class="err"&gt;\\&lt;/span&gt;&lt;span class="p"&gt;.]&lt;/span&gt;&lt;span class="o"&gt;+/&lt;/span&gt;
+&lt;span class="nl"&gt;cache&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;yarn&lt;/span&gt;
+&lt;span class="nl"&gt;before_install&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+  &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;curl&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;o&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;L&lt;/span&gt; &lt;span class="nl"&gt;https&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="c1"&gt;//yarnpkg.com/install.sh | bash&lt;/span&gt;
+  &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;export&lt;/span&gt; &lt;span class="n"&gt;PATH&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;$HOME/.yarn/bin:$PATH&amp;quot;&lt;/span&gt;
+  &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;yarn&lt;/span&gt; &lt;span class="n"&gt;global&lt;/span&gt; &lt;span class="n"&gt;add&lt;/span&gt; &lt;span class="n"&gt;greenkeeper&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;lockfile&lt;/span&gt;&lt;span class="mi"&gt;@1&lt;/span&gt;
+  &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;yarn&lt;/span&gt; &lt;span class="n"&gt;global&lt;/span&gt; &lt;span class="n"&gt;add&lt;/span&gt; &lt;span class="n"&gt;codecov&lt;/span&gt;
+&lt;span class="nl"&gt;install&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;yarn&lt;/span&gt;
+&lt;span class="nl"&gt;before_script&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+  &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;greenkeeper&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;lockfile&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;update&lt;/span&gt;
+&lt;span class="nl"&gt;script&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+  &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;yarn&lt;/span&gt; &lt;span class="n"&gt;test&lt;/span&gt;
+&lt;span class="nl"&gt;after_script&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+  &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;codecov&lt;/span&gt;
+  &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;greenkeeper&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;lockfile&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;upload&lt;/span&gt;
+&lt;span class="nl"&gt;jobs&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+  &lt;span class="nl"&gt;include&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+    &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="nl"&gt;stage&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;npm&lt;/span&gt; &lt;span class="k"&gt;release&lt;/span&gt;
+      &lt;span class="k"&gt;if&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;tag&lt;/span&gt; &lt;span class="n"&gt;IS&lt;/span&gt; &lt;span class="n"&gt;present&lt;/span&gt;
+      &lt;span class="nl"&gt;node_js&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s"&gt;&amp;quot;node&amp;quot;&lt;/span&gt;
+      &lt;span class="nl"&gt;deploy&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+        &lt;span class="nl"&gt;provider&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;npm&lt;/span&gt;
+        &lt;span class="nl"&gt;email&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s"&gt;&amp;quot;$NPM_EMAIL&amp;quot;&lt;/span&gt;
+        &lt;span class="nl"&gt;api_key&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s"&gt;&amp;quot;$NPM_TOKEN&amp;quot;&lt;/span&gt;
+        &lt;span class="nl"&gt;skip_cleanup&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="nb"&gt;true&lt;/span&gt;
+        &lt;span class="nl"&gt;on&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+          &lt;span class="nl"&gt;tags&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="nb"&gt;true&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;git&lt;/span&gt; &lt;span class="k"&gt;commit&lt;/span&gt;
+&lt;span class="n"&gt;yarn&lt;/span&gt; &lt;span class="k"&gt;version&lt;/span&gt;
+&lt;span class="n"&gt;git&lt;/span&gt; &lt;span class="n"&gt;push&lt;/span&gt; &lt;span class="n"&gt;origin&lt;/span&gt; &lt;span class="n"&gt;master&lt;/span&gt; &lt;span class="c1"&gt;--tag&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;原因判明して解決するまでパッチバージョン9もあげる事に。なんとも情けない。&lt;/p&gt;
+&lt;h1 id="process"&gt;Process&lt;/h1&gt;
+&lt;ul&gt;
+&lt;li&gt;なんで動かないのか。&lt;/li&gt;
+&lt;li&gt;コマンド間違っているのか？と、git tagをつけたり消したり・・・&lt;/li&gt;
+&lt;li&gt;travis ciの構成ファイルの &lt;code&gt;jobs&lt;/code&gt; の定義をいろいろいじったけど、動かず・・・&lt;/li&gt;
+&lt;li&gt;travis ciのRequestsをみてみると &lt;code&gt;Branch "v0.1.10" not included per configuration.&lt;/code&gt; なんてのが&lt;/li&gt;
+&lt;li&gt;あゝ、tagがbranch名になってて、ちょっと前に追加した、branchesの定義でジョブ動かないようになってしまっていたのだなと &lt;/li&gt;
+&lt;/ul&gt;
+&lt;h1 id="seealso"&gt;SeeAlso&lt;/h1&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="https://yarnpkg.com/en/docs/cli/version"&gt;yarn version&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://tailordev.fr/blog/2018/03/15/automated-npm-releases-with-travis-ci/"&gt;Automated npm releases with Travis CI&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</content><category term="yarn"></category><category term="git"></category><category term="npm"></category></entry><entry><title>ext4 root パーティションのサイズを変更する方法</title><link href="https://lupinthe14th.github.io/ext4-root-pateishiyonnosaizuwobian-geng-surufang-fa.html" rel="alternate"></link><published>2019-10-18T12:00:00+09:00</published><updated>2019-10-18T12:00:00+09:00</updated><author><name>Hideo Suzuki</name></author><id>tag:lupinthe14th.github.io,2019-10-18:/ext4-root-pateishiyonnosaizuwobian-geng-surufang-fa.html</id><summary type="html">&lt;p&gt;awsで運用しているArchlinuxサーバのルートパーティションが100%近くなってきたのでディスクサイズの拡張を行った際のメモ&lt;/p&gt;</summary><content type="html">&lt;div class="toc"&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="#_1"&gt;要件&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="#_2"&gt;手順&lt;/a&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href="#_3"&gt;作業前状態&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="#ebs"&gt;EBSボリュームの変更&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="#resize2fs"&gt;resize2fs で拡張（失敗）&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="#ebs_1"&gt;EBSボリュームのスナップショット作成&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="#fdisk"&gt;fdisk でパーティションを拡張&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="#resize2fs_1"&gt;resize2fs でファイルシステムの拡張&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;a href="#_4"&gt;参考資料&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;h1 id="_1"&gt;要件&lt;/h1&gt;
+&lt;ul&gt;
+&lt;li&gt;なるべく簡単&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;なるべくサーバ再起動なし&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;今回の手順ではサーバ再起動が必要となった&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h1 id="_2"&gt;手順&lt;/h1&gt;
+&lt;h2 id="_3"&gt;作業前状態&lt;/h2&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="gp"&gt;#&lt;/span&gt; df -h
+&lt;span class="go"&gt;ファイルシス   サイズ  使用  残り 使用% マウント位置&lt;/span&gt;
+&lt;span class="go"&gt;dev              992M     0  992M    0% /dev&lt;/span&gt;
+&lt;span class="go"&gt;run             1000M  436K 1000M    1% /run&lt;/span&gt;
+&lt;span class="go"&gt;/dev/xvda1        16G   15G  211M   99% /&lt;/span&gt;
+&lt;span class="go"&gt;tmpfs           1000M  4.0K 1000M    1% /dev/shm&lt;/span&gt;
+&lt;span class="go"&gt;tmpfs           1000M     0 1000M    0% /sys/fs/cgroup&lt;/span&gt;
+&lt;span class="go"&gt;tmpfs           1000M  1.1M  999M    1% /tmp&lt;/span&gt;
+&lt;span class="go"&gt;tmpfs            200M     0  200M    0% /run/user/0&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="gp"&gt;#&lt;/span&gt; lsblk
+&lt;span class="go"&gt;NAME    MAJ:MIN RM SIZE RO TYPE MOUNTPOINT&lt;/span&gt;
+&lt;span class="go"&gt;xvda    202:0    0  32G  0 disk&lt;/span&gt;
+&lt;span class="go"&gt;└─xvda1 202:1    0  16G  0 part /&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2 id="ebs"&gt;EBSボリュームの変更&lt;/h2&gt;
+&lt;p&gt;&lt;a href="https://docs.aws.amazon.com/ja_jp/AWSEC2/latest/UserGuide/requesting-ebs-volume-modifications.html#modify-ebs-volume"&gt;Elastic Volumes を使用して EBS ボリュームを変更する (コンソール)&lt;/a&gt; を参考にサイズ変更のみ実施。&lt;/p&gt;
+&lt;h2 id="resize2fs"&gt;&lt;code&gt;resize2fs&lt;/code&gt; で拡張（失敗）&lt;/h2&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="gp"&gt;#&lt;/span&gt; resize2fs /dev/xvda1
+&lt;span class="go"&gt;resize2fs 1.43.4 (31-Jan-2017)&lt;/span&gt;
+&lt;span class="go"&gt;The filesystem is already 4194048 (4k) blocks long.  Nothing to do!&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;簡単に &lt;code&gt;resize2fs&lt;/code&gt; コマンド一発では拡張出来なかった。&lt;/p&gt;
+&lt;p&gt;調べたら、&lt;a href="https://qiita.com/ikeisuke/items/125ed240c3881036a287"&gt;オンラインでEC2のルートディスクを拡張する&lt;/a&gt; 同じようなメッセージが出力されている記事を発見したので、&lt;code&gt;growpart&lt;/code&gt; コマンドでパーティションを拡張してみます。 &lt;sup id="fnref:1"&gt;&lt;a class="footnote-ref" href="#fn:1"&gt;1&lt;/a&gt;&lt;/sup&gt;&lt;/p&gt;
+&lt;p&gt;growpart` でパーティションを拡張&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="gp"&gt;#&lt;/span&gt; growpart /dev/xvda &lt;span class="m"&gt;1&lt;/span&gt;
+&lt;span class="go"&gt;NOCHANGE: partition 1 could only be grown by -32125898 [fudge=20480]&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;あら。拡張出来ないみたい。いろいろ調べたけど &lt;code&gt;fdisk&lt;/code&gt; なりで手動でパーティションを拡張するしかなさそう。&lt;/p&gt;
+&lt;h2 id="ebs_1"&gt;EBSボリュームのスナップショット作成&lt;/h2&gt;
+&lt;p&gt;&lt;a href="https://docs.aws.amazon.com/ja_jp/AWSEC2/latest/UserGuide/ebs-creating-snapshot.html"&gt;Amazon EBS スナップショットの作成&lt;/a&gt; を参考にスナップショットを作成。&lt;/p&gt;
+&lt;h2 id="fdisk"&gt;&lt;code&gt;fdisk&lt;/code&gt; でパーティションを拡張&lt;/h2&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="gp"&gt;#&lt;/span&gt; fdisk /dev/xvda
+
+&lt;span class="go"&gt;fdisk (util-linux 2.29.2) へようこそ。&lt;/span&gt;
+&lt;span class="go"&gt;ここで設定した内容は、書き込みコマンドを実行するまでメモリのみに保持されます。&lt;/span&gt;
+&lt;span class="go"&gt;書き込みコマンドを使用する際は、注意して実行してください。&lt;/span&gt;
+
+
+&lt;span class="go"&gt;コマンド (m でヘルプ): p&lt;/span&gt;
+&lt;span class="go"&gt;ディスク /dev/xvda: 32 GiB, 34359738368 バイト, 67108864 セクタ&lt;/span&gt;
+&lt;span class="go"&gt;単位: セクタ (1 * 512 = 512 バイト)&lt;/span&gt;
+&lt;span class="go"&gt;セクタサイズ (論理 / 物理): 512 バイト / 512 バイト&lt;/span&gt;
+&lt;span class="go"&gt;I/O サイズ (最小 / 推奨): 512 バイト / 512 バイト&lt;/span&gt;
+&lt;span class="go"&gt;ディスクラベルのタイプ: dos&lt;/span&gt;
+&lt;span class="go"&gt;ディスク識別子: 0xfd1cae39&lt;/span&gt;
+
+&lt;span class="go"&gt;デバイス   起動 開始位置 最後から   セクタ サイズ Id タイプ&lt;/span&gt;
+&lt;span class="go"&gt;/dev/xvda1          2048 33554431 33552384    16G 83 Linux&lt;/span&gt;
+
+&lt;span class="go"&gt;コマンド (m でヘルプ): d&lt;/span&gt;
+&lt;span class="go"&gt;パーティション 1 を選択&lt;/span&gt;
+&lt;span class="go"&gt;パーティション 1 を削除しました。&lt;/span&gt;
+
+&lt;span class="go"&gt;コマンド (m でヘルプ): n&lt;/span&gt;
+&lt;span class="go"&gt;パーティションタイプ&lt;/span&gt;
+&lt;span class="go"&gt;   p   基本パーティション (0 プライマリ, 0 拡張, 4 空き)&lt;/span&gt;
+&lt;span class="go"&gt;      e   拡張領域 (論理パーティションが入ります)&lt;/span&gt;
+&lt;span class="go"&gt; 選択 (既定値 p): p&lt;/span&gt;
+&lt;span class="go"&gt; パーティション番号 (1-4, 既定値 1): 1&lt;/span&gt;
+&lt;span class="go"&gt; 最初のセクタ (2048-67108863, 既定値 2048): 2048&lt;/span&gt;
+&lt;span class="go"&gt; 最終セクタ, +セクタ番号 または +サイズ{K,M,G,T,P} (2048-67108863, 既定値 67108863):&lt;/span&gt;
+
+&lt;span class="go"&gt; 新しいパーティション 1 をタイプ Linux、サイズ 32 GiB で作成しました。&lt;/span&gt;
+&lt;span class="go"&gt; Partition #1 contains a ext4 signature.&lt;/span&gt;
+
+&lt;span class="go"&gt; Do you want to remove the signature? [Y]es/[N]o: N&lt;/span&gt;
+
+&lt;span class="go"&gt; コマンド (m でヘルプ): a&lt;/span&gt;
+
+&lt;span class="go"&gt; パーティション 1 を選択&lt;/span&gt;
+&lt;span class="go"&gt; パーティション 1 の起動フラグを有効にしました。&lt;/span&gt;
+
+&lt;span class="go"&gt; コマンド (m でヘルプ): p&lt;/span&gt;
+&lt;span class="go"&gt; ディスク /dev/xvda: 32 GiB, 34359738368 バイト, 67108864 セクタ&lt;/span&gt;
+&lt;span class="go"&gt; 単位: セクタ (1 * 512 = 512 バイト)&lt;/span&gt;
+&lt;span class="go"&gt; セクタサイズ (論理 / 物理): 512 バイト / 512 バイト&lt;/span&gt;
+&lt;span class="go"&gt; I/O サイズ (最小 / 推奨): 512 バイト / 512 バイト&lt;/span&gt;
+&lt;span class="go"&gt; ディスクラベルのタイプ: dos&lt;/span&gt;
+&lt;span class="go"&gt; ディスク識別子: 0xfd1cae39&lt;/span&gt;
+
+&lt;span class="go"&gt; デバイス   起動 開始位置 最後から   セクタ サイズ Id タイプ&lt;/span&gt;
+&lt;span class="go"&gt; /dev/xvda1 *        2048 67108863 67106816    32G 83 Linux&lt;/span&gt;
+
+&lt;span class="go"&gt; コマンド (m でヘルプ): w&lt;/span&gt;
+&lt;span class="go"&gt; パーティション情報が変更されました。&lt;/span&gt;
+&lt;span class="go"&gt; ioctl() を呼び出してパーティション情報を再読み込みします。&lt;/span&gt;
+&lt;span class="go"&gt; パーティション情報の再読み込みに失敗しました。: デバイスもしくはリソースがビジー状態です&lt;/span&gt;
+
+&lt;span class="go"&gt; カーネルは古い情報を使用しています。新しい情報を利用するには、システムを再起動するか、もしくは partprobe(8) または kpartx(8) を実行してください。&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;&lt;code&gt;partprobe&lt;/code&gt; か &lt;code&gt;kpartx&lt;/code&gt; を使えばサーバ再起動する必要なさそうでしたが、調査の過程でサーバー再起動していたので今回はサーバ再起動します。&lt;/p&gt;
+&lt;p&gt;リブートプロセスで強制的に &lt;code&gt;fsck&lt;/code&gt; を実行させるため以下コマンドを実行します。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="gp"&gt;#&lt;/span&gt; touch /forcefsck
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="gp"&gt;#&lt;/span&gt; reboot
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2 id="resize2fs_1"&gt;&lt;code&gt;resize2fs&lt;/code&gt; でファイルシステムの拡張&lt;/h2&gt;
+&lt;p&gt;&lt;code&gt;reboot&lt;/code&gt; 後、&lt;code&gt;resize2fs&lt;/code&gt; コマンドでファイルシステムを拡張する。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="gp"&gt;#&lt;/span&gt; resize2fs /dev/xvda1
+&lt;span class="go"&gt;resize2fs 1.43.4 (31-Jan-2017)&lt;/span&gt;
+&lt;span class="go"&gt;Filesystem at /dev/xvda1 is mounted on /; on-line resizing required&lt;/span&gt;
+&lt;span class="go"&gt;old_desc_blocks = 2, new_desc_blocks = 4&lt;/span&gt;
+&lt;span class="go"&gt;The filesystem on /dev/xvda1 is now 8388352 (4k) blocks long.&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="gp"&gt;#&lt;/span&gt; df -h
+&lt;span class="go"&gt;ファイルシス   サイズ  使用  残り 使用% マウント位置&lt;/span&gt;
+&lt;span class="go"&gt;dev              992M     0  992M    0% /dev&lt;/span&gt;
+&lt;span class="go"&gt;run             1000M  444K 1000M    1% /run&lt;/span&gt;
+&lt;span class="go"&gt;/dev/xvda1        32G   15G   16G   50% /&lt;/span&gt;
+&lt;span class="go"&gt;tmpfs           1000M  4.0K 1000M    1% /dev/shm&lt;/span&gt;
+&lt;span class="go"&gt;tmpfs           1000M     0 1000M    0% /sys/fs/cgroup&lt;/span&gt;
+&lt;span class="go"&gt;tmpfs           1000M   12K 1000M    1% /tmp&lt;/span&gt;
+&lt;span class="go"&gt;tmpfs            200M     0  200M    0% /run/user/0&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;無事ファイルシステムの拡張が完了。作成したスナップショットは必要に応じて削除ください。&lt;/p&gt;
+&lt;h1 id="_4"&gt;参考資料&lt;/h1&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="https://linuxconfig.org/how-to-resize-ext4-root-partition-live-without-Aumount"&gt;How to resize ext4 root partition live without umount on Linux&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://docs.aws.amazon.com/ja_jp/AWSEC2/latest/UserGuide/requesting-ebs-volume-modifications.html#modify-ebs-volume"&gt;Elastic Volumes を使用して EBS ボリュームを変更する (コンソール)&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://docs.aws.amazon.com/ja_jp/AWSEC2/latest/UserGuide/recognize-expanded-volume-linux.html#extend-linux-volume-partition"&gt;ボリュームサイズ変更後の Linux ファイルシステムの拡張&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://qiita.com/ikeisuke/items/125ed240c3881036a287"&gt;オンラインでEC2のルートディスクを拡張する&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class="footnote"&gt;
+&lt;hr&gt;
+&lt;ol&gt;
+&lt;li id="fn:1"&gt;
+&lt;p&gt;後で確認したら、AWSのドキュメント &lt;a href="https://docs.aws.amazon.com/ja_jp/AWSEC2/latest/UserGuide/recognize-expanded-volume-linux.html#extend-linux-volume-partition"&gt;パーティションの拡張 (必要な場合)&lt;/a&gt; に記載がありますね&amp;#160;&lt;a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text"&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;</content><category term="aws"></category><category term="archlinux"></category><category term="ext4"></category><category term="fdisk"></category><category term="growpart"></category><category term="resize2fs"></category></entry><entry><title>Macでシリアル接続</title><link href="https://lupinthe14th.github.io/macdeshiriarujie-sok.html" rel="alternate"></link><published>2016-10-11T00:00:00+09:00</published><updated>2016-10-11T00:00:00+09:00</updated><author><name>Hideo Suzuki</name></author><id>tag:lupinthe14th.github.io,2016-10-11:/macdeshiriarujie-sok.html</id><summary type="html">Mac OS Xからコンソール接続するときの方法をすぐ忘れるのでメモ。</summary><content type="html">&lt;div class="section" id="id1"&gt;
+&lt;h2&gt;接続方法&lt;/h2&gt;
+&lt;ol class="arabic"&gt;
+&lt;li&gt;&lt;p class="first"&gt;デバイスの確認&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="gp"&gt;%&lt;/span&gt; ls /dev/tty.usb*
+&lt;span class="go"&gt;/dev/tty.usbserial-FTK1SOHS&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p class="first"&gt;接続&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="gp"&gt;%&lt;/span&gt; screen /dev/tty.usbserial-FTK1SOHS
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p class="first"&gt;切断&lt;/p&gt;
+&lt;p&gt;&lt;cite&gt;Control-a k&lt;/cite&gt; で、 &lt;cite&gt;Really kill this window [y/n]&lt;/cite&gt; と表示されるので、 y を押して
+screen を終了する。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;div class="section" id="id2"&gt;
+&lt;h2&gt;参考資料&lt;/h2&gt;
+&lt;ul class="simple"&gt;
+&lt;li&gt;&lt;a class="reference external" href="http://qiita.com/hideyuki/items/9258f33180d98ad0cb1e"&gt;Mac の screen コマンドでシリアル通信&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+</content><category term="Mac OS X"></category><category term="シリアル"></category><category term="USBシリアルケーブル"></category><category term="Console"></category><category term="memo"></category></entry></feed>

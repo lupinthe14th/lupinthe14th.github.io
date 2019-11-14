@@ -1,0 +1,785 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom"><title>engineering note - Rasberry Pi</title><link href="https://lupinthe14th.github.io/" rel="alternate"></link><link href="https://lupinthe14th.github.io/feeds/rasberry-pi.atom.xml" rel="self"></link><id>https://lupinthe14th.github.io/</id><updated>2017-04-14T00:00:00+09:00</updated><entry><title>ArchlinuxでMastdon</title><link href="https://lupinthe14th.github.io/mastodon.html" rel="alternate"></link><published>2017-04-14T00:00:00+09:00</published><updated>2017-04-14T00:00:00+09:00</updated><author><name>Hideo Suzuki</name></author><id>tag:lupinthe14th.github.io,2017-04-14:/mastodon.html</id><summary type="html">&lt;p&gt;Archlinuxでmastodon&lt;/p&gt;</summary><content type="html">&lt;h1 id="_1"&gt;目的&lt;/h1&gt;
+&lt;p&gt;面白そうだからやってみる
+- 一旦全く使わなくなったawsのアカウントを利用して試す
+- 仕組みとかわかってきたらRasberryPiで自宅サーバとして運用も視野に入れる&lt;/p&gt;
+&lt;h1 id="rr"&gt;ドメインの登録とRRの作成&lt;/h1&gt;
+&lt;p&gt;お手軽にawsのRoute53サービスから新規ドメイン作成し、グローバルIPアドレスを紐付ける&lt;/p&gt;
+&lt;h1 id="postfix"&gt;Postfix環境の構築&lt;/h1&gt;
+&lt;h2 id="postfix-install"&gt;Postfix Install&lt;/h2&gt;
+&lt;h2 id="postfix-config"&gt;Postfix config&lt;/h2&gt;
+&lt;h2 id="erastic-ip-aws-route53-rtr"&gt;Erastic IP aws Route53 RTRの定義とメール配信申請&lt;/h2&gt;
+&lt;h2 id="dkim-config"&gt;DKIM config&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;OpenDKIM Install&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="go"&gt;sudo pacman -Sy opendkim&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h1 id="install"&gt;Install 手順&lt;/h1&gt;
+&lt;h2 id="_2"&gt;前提条件&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;aws環境にArchlinux環境の構築は省略&lt;/li&gt;
+&lt;li&gt;yarnのインストール&lt;/li&gt;
+&lt;li&gt;nftablesのインストール&lt;/li&gt;
+&lt;li&gt;rbenvのインストール&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="mastodon"&gt;mastodonユーザーの作成&lt;/h2&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="go"&gt;useradd -m mastodon&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="go"&gt;su - mastodon&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2 id="mastodon-clone"&gt;mastodon clone&lt;/h2&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="go"&gt;git clone https://github.com/tootsuite/mastodon.git&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2 id="install-rbenv"&gt;Install rbenv&lt;/h2&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;git&lt;/span&gt; &lt;span class="n"&gt;clone&lt;/span&gt; &lt;span class="n"&gt;https&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="o"&gt;//&lt;/span&gt;&lt;span class="n"&gt;github&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;com&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;rbenv&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;rbenv&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;git&lt;/span&gt; &lt;span class="o"&gt;~/&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;rbenv&lt;/span&gt;
+&lt;span class="n"&gt;cd&lt;/span&gt; &lt;span class="o"&gt;~/&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;rbenv&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="n"&gt;src&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;configure&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="n"&gt;make&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="k"&gt;C&lt;/span&gt; &lt;span class="n"&gt;src&lt;/span&gt;
+&lt;span class="n"&gt;echo&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;export PATH = &amp;quot;$HOME/.rbenv/bin:$PATH&amp;quot;&amp;#39;&lt;/span&gt; &lt;span class="o"&gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="o"&gt;~/&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;bash_profile&lt;/span&gt;
+&lt;span class="n"&gt;echo&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;eval &amp;quot;$(rbenv init -)&amp;quot;&amp;#39;&lt;/span&gt; &lt;span class="o"&gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="o"&gt;~/&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;bash_profile&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;git&lt;/span&gt; &lt;span class="n"&gt;clone&lt;/span&gt; &lt;span class="n"&gt;https&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="o"&gt;//&lt;/span&gt;&lt;span class="n"&gt;github&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;com&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;rbenv&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;ruby&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;build&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;git&lt;/span&gt; &lt;span class="o"&gt;~/&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;rbenv&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;plugins&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;ruby&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;build&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;export&lt;/span&gt; &lt;span class="n"&gt;PATH&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="ss"&gt;&amp;quot;$HOME/.rbenv/bin::$PATH&amp;quot;&lt;/span&gt;
+&lt;span class="n"&gt;eval&lt;/span&gt; &lt;span class="ss"&gt;&amp;quot;$(rbenv init -)&amp;quot;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;cd&lt;/span&gt; &lt;span class="n"&gt;mastodon&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="nv"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;&lt;span class="s"&gt;Compiling Ruby $(cat .ruby-version): warning,  this takes a while!!!&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;
+&lt;span class="nv"&gt;rbenv&lt;/span&gt; &lt;span class="nv"&gt;install&lt;/span&gt; $&lt;span class="ss"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;cat&lt;/span&gt; .&lt;span class="nv"&gt;ruby&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="nv"&gt;version&lt;/span&gt;&lt;span class="ss"&gt;)&lt;/span&gt;
+&lt;span class="nv"&gt;rbenv&lt;/span&gt; &lt;span class="nv"&gt;global&lt;/span&gt; $&lt;span class="ss"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;cat&lt;/span&gt; .&lt;span class="nv"&gt;ruby&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="nv"&gt;version&lt;/span&gt;&lt;span class="ss"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h1 id="configure-database"&gt;Configure database&lt;/h1&gt;
+&lt;h2 id="init-postgresql"&gt;init postgresql&lt;/h2&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="go"&gt;su - postgres&lt;/span&gt;
+&lt;span class="go"&gt;initdb --locale $LANG -E UTF8 -D &amp;#39;/var/lib/postgres/data&amp;#39;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2 id="configure-database_1"&gt;Configure database&lt;/h2&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="go"&gt;sudo -i -u postgres createuser -U postgres mastodon -s&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h1 id="install-gems-and-node-modules"&gt;Install gems and node modules&lt;/h1&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="go"&gt;su - mastodon&lt;/span&gt;
+&lt;span class="go"&gt;cd mastodon&lt;/span&gt;
+&lt;span class="go"&gt;gem install bundler&lt;/span&gt;
+&lt;span class="go"&gt;bundle install&lt;/span&gt;
+&lt;span class="go"&gt;yarn install&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h1 id="configure-redis"&gt;Configure redis&lt;/h1&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="go"&gt;systemctl enable redis&lt;/span&gt;
+&lt;span class="go"&gt;systemctl start redis&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h1 id="_3"&gt;&lt;/h1&gt;
+&lt;h1 id="build-mastodon"&gt;Build Mastodon&lt;/h1&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="go"&gt;bundle exec rails db:setup RAIS_ENV = production&lt;/span&gt;
+&lt;span class="go"&gt;bundle exec rails assets:precompile RAILS_ENV=production&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2 id="_4"&gt;推奨ビルド環境&lt;/h2&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="go"&gt;pacman -S --needed base-devel libffi libyaml openssl zlib&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2 id="mastodon_1"&gt;mastodonのインストール&lt;/h2&gt;
+&lt;p&gt;&lt;code&gt;pacman&lt;/code&gt; を利用してパッケージインストールを行う。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="go"&gt;pacman -Sy ffmpeg imagemagick libpqxx libxml2 libxslt nodejs postgresql redis yaourt&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;</content><category term="mastodon"></category><category term="aws"></category><category term="USB-HDD"></category></entry><entry><title>Rasberry Pi2 の ルートファイルシステムを HDD 化（ついでにRAID1 化）</title><link href="https://lupinthe14th.github.io/USB-HDD%20boot.html" rel="alternate"></link><published>2016-01-14T15:00:00+09:00</published><updated>2016-01-14T15:00:00+09:00</updated><author><name>Hideo Suzuki</name></author><id>tag:lupinthe14th.github.io,2016-01-14:/USB-HDD boot.html</id><summary type="html">&lt;p&gt;Rasberry Pi2 のルートファイルシステムを、USB-HDD にする。ついでに、mdadm で、RAID1 構成にして、データ保存の冗長化を行う。&lt;/p&gt;</summary><content type="html">&lt;h1 id="_1"&gt;目的&lt;/h1&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;ルートファイルシステムの USB-HDD 化&lt;/p&gt;
+&lt;p&gt;Raserry Pi2 のディスクは、SDメモリカード。これは消去・書き込み可能回数が
+限られている。
+そこで、ルートファイルシステムを USB-HDD にすることにより、
+消去・ 書き込み可能回数制限の制約を無くす。&lt;sup id="fnref:1"&gt;&lt;a class="footnote-ref" href="#fn:1"&gt;1&lt;/a&gt;&lt;/sup&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;RAID1 によるデータ保存の冗長化&lt;/p&gt;
+&lt;p&gt;USB-HDD を 冗長可能な構成にすることにより、データ保存の冗長化を図る。&lt;/p&gt;
+&lt;p&gt;なお調達の都合上、最初はUSB-HDD 一つでディグレード(片肺運転)のRAID構成を作成
+する。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h1 id="install"&gt;Install 手順&lt;/h1&gt;
+&lt;h2 id="_2"&gt;前提条件&lt;/h2&gt;
+&lt;p&gt;以下に作業の前提条件を記載する。&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;Rasberry Pi2 のSDメモリカード boot 済み&lt;/p&gt;
+&lt;p&gt;&lt;a href="https://wiki.ubuntu.com/ARM/RaspberryPi"&gt;ARM/RaspberryPi - Ubuntu Wiki&lt;/a&gt; 
+でSDメモリカードを作成し、Rasberry Pi2 で起動済み。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;クライアント&lt;/p&gt;
+&lt;p&gt;Mac OS X El Capitan (version 10.11.2) で作業&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id="mdadm-install"&gt;mdadm の Install&lt;/h2&gt;
+&lt;p&gt;以下のコマンドをターミナルで実行する。&lt;/p&gt;
+&lt;p&gt;なお、途中で、postfix の設定画面が表示されるが、設定なしで抜ける。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="gp"&gt;$&lt;/span&gt; sudo -i
+&lt;span class="gp"&gt;#&lt;/span&gt; apt-get install -y mdadm
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2 id="usb-hdd"&gt;USB-HDD の構成&lt;/h2&gt;
+&lt;p&gt;USB-HDD の構成を確認し、パーティションを再作成する。&lt;/p&gt;
+&lt;h3 id="_3"&gt;現状の確認&lt;/h3&gt;
+&lt;p&gt;&lt;code&gt;fdisk&lt;/code&gt; コマンドで、USB-HDD の現状の構成を確認する。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="gp"&gt;#&lt;/span&gt; fdisk -l
+
+&lt;span class="go"&gt;Disk /dev/mmcblk0: 15.8 GB, 15804137472 bytes&lt;/span&gt;
+&lt;span class="go"&gt;ヘッド 4, セクタ 16, シリンダ 482304, 合計 30867456 セクタ&lt;/span&gt;
+&lt;span class="go"&gt;Units = セクタ数 of 1 * 512 = 512 バイト&lt;/span&gt;
+&lt;span class="go"&gt;セクタサイズ (論理 / 物理): 512 バイト / 512 バイト&lt;/span&gt;
+&lt;span class="go"&gt;I/O サイズ (最小 / 推奨): 512 バイト / 512 バイト&lt;/span&gt;
+&lt;span class="go"&gt;ディスク識別子: 0x00000000&lt;/span&gt;
+
+&lt;span class="go"&gt;  デバイス ブート      始点        終点     ブロック   Id  システム&lt;/span&gt;
+&lt;span class="go"&gt;/dev/mmcblk0p1   *        2048      133119       65536    c  W95 FAT32 (LBA)&lt;/span&gt;
+&lt;span class="go"&gt;/dev/mmcblk0p2          133120    30867455    15367168   83  Linux&lt;/span&gt;
+
+&lt;span class="go"&gt;Disk /dev/sda: 500.1 GB, 500107862016 bytes&lt;/span&gt;
+&lt;span class="go"&gt;ヘッド 81, セクタ 63, シリンダ 191411, 合計 976773168 セクタ&lt;/span&gt;
+&lt;span class="go"&gt;Units = セクタ数 of 1 * 512 = 512 バイト&lt;/span&gt;
+&lt;span class="go"&gt;セクタサイズ (論理 / 物理): 512 バイト / 512 バイト&lt;/span&gt;
+&lt;span class="go"&gt;I/O サイズ (最小 / 推奨): 512 バイト / 512 バイト&lt;/span&gt;
+&lt;span class="go"&gt;ディスク識別子: 0x75ee47c1&lt;/span&gt;
+
+&lt;span class="go"&gt;デバイス ブート      始点        終点     ブロック   Id  システム&lt;/span&gt;
+&lt;span class="go"&gt;/dev/sda1            2048   976773167   488385560   83  Linux&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="gp"&gt;#&lt;/span&gt; df
+&lt;span class="go"&gt;Filesystem     1K-blocks    Used Available Use% Mounted on&lt;/span&gt;
+&lt;span class="go"&gt;/dev/root       15100208 2903300  11550832  21% /&lt;/span&gt;
+&lt;span class="go"&gt;devtmpfs          468772       4    468768   1% /dev&lt;/span&gt;
+&lt;span class="go"&gt;none                   4       0         4   0% /sys/fs/cgroup&lt;/span&gt;
+&lt;span class="go"&gt;none               94612     292     94320   1% /run&lt;/span&gt;
+&lt;span class="go"&gt;none                5120       0      5120   0% /run/lock&lt;/span&gt;
+&lt;span class="go"&gt;none              473052       0    473052   0% /run/shm&lt;/span&gt;
+&lt;span class="go"&gt;none              102400       0    102400   0% /run/user&lt;/span&gt;
+&lt;span class="go"&gt;/dev/mmcblk0p1     65390   20334     45056  32% /boot/firmware&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h3 id="_4"&gt;パーティションの再作成&lt;/h3&gt;
+&lt;p&gt;&lt;code&gt;fdisk&lt;/code&gt; コマンドで、パーテーションを一度削除してパーテーションを新規作成し
+パーテーションタイプをRAID 自動認識:0xfdに書き換える。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="gp"&gt;#&lt;/span&gt; fdisk /dev/sda
+
+&lt;span class="go"&gt;d コマンドで削除&lt;/span&gt;
+&lt;span class="go"&gt;n　コマンドで&lt;/span&gt;
+&lt;span class="go"&gt;p プライマリパーテーションを　全領域に設定&lt;/span&gt;
+&lt;span class="go"&gt;t コマンド　パーテーション　タイプは0xfd RAID auto&lt;/span&gt;
+&lt;span class="go"&gt;p コマンドで確認後&lt;/span&gt;
+&lt;span class="go"&gt;w コマンドで書き込み終了&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;新規に作成したパーテーションテーブルを再起動せずに更新する。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="gp"&gt;#&lt;/span&gt; partprobe
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2 id="raid"&gt;RAID デバイスの作成&lt;/h2&gt;
+&lt;p&gt;USB-HDD 一つでディグレード(片肺運転)のRAIDデバイスを作成する。&lt;/p&gt;
+&lt;h3 id="raid_1"&gt;RAID デバイスの作成&lt;/h3&gt;
+&lt;p&gt;以下のコマンドを実行し、RAIDデバイスを作成する。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="gp"&gt;#&lt;/span&gt; mdadm -C /dev/md0 -l1 -n2 missing /dev/sda1
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h3 id="raid_2"&gt;RAID デバイスの確認&lt;/h3&gt;
+&lt;p&gt;以下のコマンドで、作成したRAIDデバイスの状態を確認する。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="gp"&gt;#&lt;/span&gt; cat /proc/mdstat
+&lt;span class="go"&gt;Personalities : [raid1]&lt;/span&gt;
+&lt;span class="go"&gt;md0 : active raid1 sda1[1]&lt;/span&gt;
+&lt;span class="go"&gt;      488254336 blocks super 1.2 [2/1] [_U]&lt;/span&gt;
+
+&lt;span class="go"&gt;unused devices: &amp;lt;none&amp;gt;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h3 id="_5"&gt;ファイルシステムの作成&lt;/h3&gt;
+&lt;p&gt;作成したRAIDデバイスにファイルシステムを作成する。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="gp"&gt;#&lt;/span&gt; mkfs /dev/md0 -t ext4
+&lt;span class="go"&gt;mke2fs 1.42.9 (4-Feb-2014)&lt;/span&gt;
+&lt;span class="go"&gt;Filesystem label=&lt;/span&gt;
+&lt;span class="go"&gt;OS type: Linux&lt;/span&gt;
+&lt;span class="go"&gt;Block size=4096 (log=2)&lt;/span&gt;
+&lt;span class="go"&gt;Fragment size=4096 (log=2)&lt;/span&gt;
+&lt;span class="go"&gt;Stride=0 blocks, Stripe width=0 blocks&lt;/span&gt;
+&lt;span class="go"&gt;30523392 inodes, 122063584 blocks&lt;/span&gt;
+&lt;span class="go"&gt;6103179 blocks (5.00%) reserved for the super user&lt;/span&gt;
+&lt;span class="go"&gt;First data block=0&lt;/span&gt;
+&lt;span class="go"&gt;Maximum filesystem blocks=0&lt;/span&gt;
+&lt;span class="go"&gt;3726 block groups&lt;/span&gt;
+&lt;span class="go"&gt;32768 blocks per group, 32768 fragments per group&lt;/span&gt;
+&lt;span class="go"&gt;8192 inodes per group&lt;/span&gt;
+&lt;span class="go"&gt;Superblock backups stored on blocks:&lt;/span&gt;
+&lt;span class="go"&gt;        32768, 98304, 163840, 229376, 294912, 819200, 884736, 1605632, 2654208,&lt;/span&gt;
+&lt;span class="go"&gt;        4096000, 7962624, 11239424, 20480000, 23887872, 71663616, 78675968,&lt;/span&gt;
+&lt;span class="go"&gt;        102400000&lt;/span&gt;
+
+&lt;span class="go"&gt;Allocating group tables: done&lt;/span&gt;
+&lt;span class="go"&gt;Writing inode tables: done&lt;/span&gt;
+&lt;span class="go"&gt;Creating journal (32768 blocks): done&lt;/span&gt;
+&lt;span class="go"&gt;Writing superblocks and filesystem accounting information: done&lt;/span&gt;
+
+&lt;span class="gp"&gt;#&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h3 id="mdadm"&gt;mdadm 設定ファイルへ反映&lt;/h3&gt;
+&lt;p&gt;作成したRAIDデバイスを &lt;code&gt;mdadm.conf&lt;/code&gt; に反映する。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="gp"&gt;#&lt;/span&gt; mdadm -D -s
+&lt;span class="go"&gt;ARRAY /dev/md0 metadata=1.2 name=ubuntu:0 UUID=243a78c7:63ef7642:af4a8dfe:5f1bc4ca&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="gp"&gt;#&lt;/span&gt; cat /etc/mdadm/mdadm.conf
+&lt;span class="gp"&gt;#&lt;/span&gt; mdadm.conf
+&lt;span class="gp"&gt;#&lt;/span&gt;
+&lt;span class="gp"&gt;#&lt;/span&gt; Please refer to mdadm.conf&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;5&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="k"&gt;for&lt;/span&gt; information about this file.
+&lt;span class="gp"&gt;#&lt;/span&gt;
+
+&lt;span class="gp"&gt;#&lt;/span&gt; by default &lt;span class="o"&gt;(&lt;/span&gt;built-in&lt;span class="o"&gt;)&lt;/span&gt;, scan all partitions &lt;span class="o"&gt;(&lt;/span&gt;/proc/partitions&lt;span class="o"&gt;)&lt;/span&gt; and all
+&lt;span class="gp"&gt;#&lt;/span&gt; containers &lt;span class="k"&gt;for&lt;/span&gt; MD superblocks. alternatively, specify devices to scan, using
+&lt;span class="gp"&gt;#&lt;/span&gt; wildcards &lt;span class="k"&gt;if&lt;/span&gt; desired.
+&lt;span class="gp"&gt;#&lt;/span&gt;DEVICE partitions containers
+
+&lt;span class="gp"&gt;#&lt;/span&gt; auto-create devices with Debian standard permissions
+&lt;span class="go"&gt;CREATE owner=root group=disk mode=0660 auto=yes&lt;/span&gt;
+
+&lt;span class="gp"&gt;#&lt;/span&gt; automatically tag new arrays as belonging to the &lt;span class="nb"&gt;local&lt;/span&gt; system
+&lt;span class="go"&gt;HOMEHOST &amp;lt;system&amp;gt;&lt;/span&gt;
+
+&lt;span class="gp"&gt;#&lt;/span&gt; instruct the monitoring daemon where to send mail alerts
+&lt;span class="go"&gt;MAILADDR root&lt;/span&gt;
+
+&lt;span class="gp"&gt;#&lt;/span&gt; definitions of existing MD arrays
+&lt;span class="go"&gt;ARRAY /dev/md0 metadata=1.2 name=ubuntu:0 UUID=243a78c7:63ef7642:af4a8dfe:5f1bc4ca&lt;/span&gt;
+
+&lt;span class="gp"&gt;#&lt;/span&gt; This file was auto-generated on Thu, &lt;span class="m"&gt;14&lt;/span&gt; Jan &lt;span class="m"&gt;2016&lt;/span&gt; &lt;span class="m"&gt;16&lt;/span&gt;:50:47 +0900
+&lt;span class="gp"&gt;#&lt;/span&gt; by mkconf &lt;span class="nv"&gt;$Id&lt;/span&gt;$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h3 id="mdadm_1"&gt;mdadm 詳細確認&lt;/h3&gt;
+&lt;p&gt;以下のコマンドを実行し、作成したRAIDデバイスの詳細を確認する。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="gp"&gt;#&lt;/span&gt; mdadm --detail /dev/md0
+&lt;span class="go"&gt;/dev/md0:&lt;/span&gt;
+&lt;span class="go"&gt;        Version : 1.2&lt;/span&gt;
+&lt;span class="go"&gt;  Creation Time : Thu Jan 14 17:07:36 2016&lt;/span&gt;
+&lt;span class="go"&gt;     Raid Level : raid1&lt;/span&gt;
+&lt;span class="go"&gt;     Array Size : 488254336 (465.64 GiB 499.97 GB)&lt;/span&gt;
+&lt;span class="go"&gt;  Used Dev Size : 488254336 (465.64 GiB 499.97 GB)&lt;/span&gt;
+&lt;span class="go"&gt;   Raid Devices : 2&lt;/span&gt;
+&lt;span class="go"&gt;  Total Devices : 1&lt;/span&gt;
+&lt;span class="go"&gt;    Persistence : Superblock is persistent&lt;/span&gt;
+
+&lt;span class="go"&gt;    Update Time : Thu Jan 14 17:15:21 2016&lt;/span&gt;
+&lt;span class="go"&gt;          State : clean, degraded&lt;/span&gt;
+&lt;span class="go"&gt; Active Devices : 1&lt;/span&gt;
+&lt;span class="go"&gt;Working Devices : 1&lt;/span&gt;
+&lt;span class="go"&gt; Failed Devices : 0&lt;/span&gt;
+&lt;span class="go"&gt;  Spare Devices : 0&lt;/span&gt;
+
+&lt;span class="go"&gt;           Name : ubuntu:0  (local to host ubuntu)&lt;/span&gt;
+&lt;span class="go"&gt;           UUID : 243a78c7:63ef7642:af4a8dfe:5f1bc4ca&lt;/span&gt;
+&lt;span class="go"&gt;         Events : 2&lt;/span&gt;
+
+&lt;span class="go"&gt;    Number   Major   Minor   RaidDevice State&lt;/span&gt;
+&lt;span class="go"&gt;       0       0        0        0      removed&lt;/span&gt;
+&lt;span class="go"&gt;       1       8        1        1      active sync   /dev/sda1&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2 id="_6"&gt;ルートファイルシステムの変更&lt;/h2&gt;
+&lt;p&gt;以下の作業を行いルートファイルシステムをUSB-HDD に作成したRAIDデバイスに変更する。&lt;/p&gt;
+&lt;h3 id="_7"&gt;マウントするデバイスの変更&lt;/h3&gt;
+&lt;p&gt;ルートファイルシステムとしてUSB-HDDのRAIDデバイスを使うように /etc/fstab を修正する。&lt;/p&gt;
+&lt;p&gt;まず、UUIDを調べる。&lt;sup id="fnref:2"&gt;&lt;a class="footnote-ref" href="#fn:2"&gt;2&lt;/a&gt;&lt;/sup&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="gp"&gt;#&lt;/span&gt; blkid
+&lt;span class="go"&gt;/dev/mmcblk0p1: SEC_TYPE=&amp;quot;msdos&amp;quot; UUID=&amp;quot;AB3E-B34D&amp;quot; TYPE=&amp;quot;vfat&amp;quot;&lt;/span&gt;
+&lt;span class="go"&gt;/dev/mmcblk0p2: UUID=&amp;quot;3aee2e0f-21f9-43c8-a4d3-e864f5d72d37&amp;quot; TYPE=&amp;quot;ext4&amp;quot;&lt;/span&gt;
+&lt;span class="go"&gt;/dev/sda1: UUID=&amp;quot;243a78c7-63ef-7642-af4a-8dfe5f1bc4ca&amp;quot; UUID_SUB=&amp;quot;c7d6abc9-e769-f9c2-2800-23713e71baed&amp;quot; LABEL=&amp;quot;ubuntu:0&amp;quot; TYPE=&amp;quot;linux_raid_member&amp;quot;&lt;/span&gt;
+&lt;span class="go"&gt;/dev/md0: UUID=&amp;quot;1e34d0a9-5481-48c1-a51e-3b1e2230b0c5&amp;quot; TYPE=&amp;quot;ext4&amp;quot;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;&lt;code&gt;/etc/fstab&lt;/code&gt; を編集する。編集後は以下の通り。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="gp"&gt;#&lt;/span&gt; cat /etc/fstab
+&lt;span class="go"&gt;proc            /proc           proc    defaults          0       0&lt;/span&gt;
+&lt;span class="gp"&gt;#&lt;/span&gt;/dev/mmcblk0p2  /               ext4    defaults,noatime  &lt;span class="m"&gt;0&lt;/span&gt;       &lt;span class="m"&gt;1&lt;/span&gt;
+&lt;span class="go"&gt;UUID=1e34d0a9-5481-48c1-a51e-3b1e2230b0c5 /  ext4 defaults,noatime 0 1&lt;/span&gt;
+&lt;span class="go"&gt;/dev/mmcblk0p1  /boot/firmware  vfat    defaults          0       2&lt;/span&gt;
+&lt;span class="gp"&gt;#&lt;/span&gt; a swapfile is not a swap partition, no line here
+&lt;span class="gp"&gt;#&lt;/span&gt;   use  dphys-swapfile swap&lt;span class="o"&gt;[&lt;/span&gt;on&lt;span class="p"&gt;|&lt;/span&gt;off&lt;span class="o"&gt;]&lt;/span&gt;  &lt;span class="k"&gt;for&lt;/span&gt; that
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h3 id="_8"&gt;起動ファイルシステムの指定の変更&lt;/h3&gt;
+&lt;p&gt;&lt;code&gt;/boot/cmdline.txt&lt;/code&gt; には起動時のルートファイルシステムとして SDカードの領域を
+指定されている。
+これをUSB-HDDのRAIDデバイスに変更する。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="gp"&gt;#&lt;/span&gt; cp /boot/cmdline.txt /boot/cmdline.txt.org
+&lt;span class="gp"&gt;#&lt;/span&gt; cat /boot/cmdline.txt
+&lt;span class="go"&gt;dwc_otg.lpm_enable=0 console=tty1 root=UUID=1e34d0a9-5481-48c1-a51e-3b1e2230b0c5 rootfstype=ext4 elevator=deadline rootwait rootdelay=5&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h3 id="_9"&gt;ルートファイルシステムのコピー&lt;/h3&gt;
+&lt;p&gt;作成したRAIDデバイスのファイルシステムに、ルートファイルシステムの内容をコピーする。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="gp"&gt;#&lt;/span&gt; mount /dev/md0 /mnt
+&lt;span class="gp"&gt;#&lt;/span&gt; &lt;span class="nb"&gt;cd&lt;/span&gt; /mnt
+&lt;span class="gp"&gt;#&lt;/span&gt; cp -ax / .
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h1 id="_10"&gt;参考資料&lt;/h1&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="http://projpi.com/diy-home-projects-with-a-raspberry-pi/raspberry-pi-raid-array-with-usb-hdds/"&gt;RASPBERRY PI RAID ARRAY WITH USB HDDS&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="http://www.palm-dreams.com/blog/?p=829"&gt;RAID1 によるraspberry pi のデータ保存の冗長化 Raspberry PI model B+&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="http://www.mztn.org/rpi/rpi44.html"&gt;Raspberry Pi メモ (44) ハードディスク起動とヘアピンNAT&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class="footnote"&gt;
+&lt;hr&gt;
+&lt;ol&gt;
+&lt;li id="fn:1"&gt;
+&lt;p&gt;USB-HDD で、USB2.0接続なので速度は落ちる。&amp;#160;&lt;a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text"&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li id="fn:2"&gt;
+&lt;p&gt;USB-HDD なので、接続を変更するとデバイス名が変更となる場合があるのでUUIDを利用する。&amp;#160;&lt;a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text"&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;</content><category term="raid"></category><category term="raid1"></category><category term="mdadm"></category><category term="USB-HDD"></category><category term="Rasberry Pi2"></category></entry><entry><title>Nominum dnsperf / resperf での DNS キャッシュサーバーのストレステスト</title><link href="https://lupinthe14th.github.io/dnsperf.html" rel="alternate"></link><published>2015-12-03T15:00:00+09:00</published><updated>2015-12-03T15:00:00+09:00</updated><author><name>Hideo Suzuki</name></author><id>tag:lupinthe14th.github.io,2015-12-03:/dnsperf.html</id><summary type="html">&lt;p&gt;DNS ストレスツール Nominum dnsperf / resperf を用いた Rasberry Pi2 で作ったNDJBDNS キャッシュサーバーのストレステスト&lt;/p&gt;</summary><content type="html">&lt;h1 id="_1"&gt;動機&lt;/h1&gt;
+&lt;p&gt;&lt;a href="http://blog.watercloud.net/article/430549899.html"&gt;Raspberry PiでつくるDNS キャッシュサーバ&lt;/a&gt; という記事
+を読んで、自分もRasberry Pi で、NDJBDNS キャッシュサーバーを作っているので、ストレス
+テストを実施してみようと思った。&lt;/p&gt;
+&lt;h1 id="_2"&gt;目的&lt;/h1&gt;
+&lt;ul&gt;
+&lt;li&gt;Rasberry Pi2 で作った、NDJBDNS キャッシュサーバーのストレステスト&lt;/li&gt;
+&lt;li&gt;Mac OS X からストレス付与出来るようにする。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h1 id="install"&gt;Install 手順&lt;/h1&gt;
+&lt;h2 id="_3"&gt;前提条件&lt;/h2&gt;
+&lt;p&gt;このインストール手順は、Mac OS X Yosemite の場合についてです。&lt;/p&gt;
+&lt;h2 id="dnsperf-resperf-install"&gt;dnsperf / resperf の Install&lt;/h2&gt;
+&lt;p&gt;以下のコマンドをターミナルで実行する。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="gp"&gt;%&lt;/span&gt; ruby -e &lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;&lt;span class="k"&gt;$(&lt;/span&gt;curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install&lt;span class="k"&gt;)&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt; &amp;lt; /dev/null &lt;span class="m"&gt;2&lt;/span&gt;&amp;gt; /dev/null
+&lt;span class="gp"&gt;%&lt;/span&gt; brew install dnsperf
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2 id="gunplot-install"&gt;gunplot の install&lt;/h2&gt;
+&lt;p&gt;&lt;code&gt;resperf&lt;/code&gt; の実行結果レポートを作成する &lt;code&gt;resperf-report&lt;/code&gt; コマンドで使用する
+&lt;code&gt;gunplot&lt;/code&gt; をインストールする。&lt;/p&gt;
+&lt;h3 id="aquatermx11"&gt;AquaTerm、X11のインストール&lt;/h3&gt;
+&lt;p&gt;&lt;code&gt;gunplot&lt;/code&gt; で利用する出力先ターミナルを事前にインストールする。&lt;/p&gt;
+&lt;h4 id="aquaterm"&gt;AquaTerm のインストール&lt;/h4&gt;
+&lt;p&gt;&lt;a href="http://sourceforge.net/projects/aquaterm/files/latest/download?source=files"&gt;AquaTermのダウンロードページ&lt;/a&gt;
+から、インストーラーをダウンロードしインストールする。&lt;/p&gt;
+&lt;h4 id="x11"&gt;X11 のインストール&lt;/h4&gt;
+&lt;p&gt;&lt;a href="http://www.xquartz.org"&gt;Mac用の X11ライブラリ XQuartz のダウンロードページ&lt;/a&gt;
+から、インストーラーをダウンロードして胃インストールする。&lt;/p&gt;
+&lt;h3 id="gunplot"&gt;gunplot のインストール&lt;/h3&gt;
+&lt;p&gt;以下のオプションを付与したコマンドでインストールする。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="gp"&gt;%&lt;/span&gt; brew install gnuplot --with-aquaterm --with-x11
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h1 id="_4"&gt;ストレステスト&lt;/h1&gt;
+&lt;p&gt;ストレスツールのインストールが完了したので、目的であるRasberry Pi2 の DNS
+キャッシュサーバーへストレステストを行う。&lt;/p&gt;
+&lt;h2 id="dnsperf-resperf"&gt;dnsperf と resperf それぞれの特徴について&lt;/h2&gt;
+&lt;p&gt;dnsperf と、resperf はそれぞれ以下の特徴がある。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;dnsperf&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;権威サーバや、LAN環境でのキャッシュサーバのテストではO.K.&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;キャッシュのテストでWAN回線を使用した場合は結果が不十分になる可能性あり&lt;/p&gt;
+&lt;p&gt;レスポンス状況でdnsperfの出す負荷(qps)が変化するため&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;resperf&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;レスポンス状態にかかわらず負荷を上げていくことができる&lt;/p&gt;
+&lt;p&gt;したがって、テスト時にWAN環境の影響を受けにくい&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;今回はLAN環境のDNSキャッシュサーバーのストレステストだが、レスポンス状態に関わら
+ず負荷をあげたい為、 &lt;code&gt;resperf&lt;/code&gt; を用いる。&lt;/p&gt;
+&lt;h2 id="_5"&gt;事前準備&lt;/h2&gt;
+&lt;p&gt;事前準備として、ストレステストで用いるクエリファイルを作成する。
+クエリファイルの書式は、&lt;code&gt;queryperf&lt;/code&gt; と同じ書式で以下の様に記載する。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;domain&lt;/span&gt; &lt;span class="k"&gt;type&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;サンプルは以下の通り。
+試験の為に対象レコードは 100,000 規模で作成する。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;example.&lt;span class="k"&gt;com&lt;/span&gt; &lt;span class="k"&gt;a&lt;/span&gt;
+example.&lt;span class="k"&gt;com&lt;/span&gt; soa
+example.&lt;span class="k"&gt;com&lt;/span&gt; ns
+example.&lt;span class="k"&gt;com&lt;/span&gt; mx
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;dnsperf で提供しているサンプルは以下にて取得可能。レコードは、 10,000,000 ある。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="gp"&gt;%&lt;/span&gt; wget ftp://ftp.nominum.com/pub/nominum//dnsperf/data/queryfile-example-current.gz
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2 id="_6"&gt;ストレステストの実行&lt;/h2&gt;
+&lt;p&gt;以下のコマンドを用いて、ストレステストを実行する。
+192.168.0.7 は、ストレステスト対象のDNS キャッシュサーバーのIPアドレス。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="gp"&gt;%&lt;/span&gt; resperf-report -s &lt;span class="m"&gt;192&lt;/span&gt;.168.0.7 -d query.txt -m &lt;span class="m"&gt;30000&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2 id="_7"&gt;ストレステストの結果&lt;/h2&gt;
+&lt;p&gt;ストレステストのパターンとして、キャッシュヒット率100%と、0%の場合でストレステス
+トを実施した。&lt;/p&gt;
+&lt;p&gt;なお、前提条件として、ゾーンは２つ（正引きと逆引き）で、data の行数は、196,614で
+行った。&lt;/p&gt;
+&lt;h3 id="100"&gt;キャッシュヒット率 100% の場合&lt;/h3&gt;
+&lt;p&gt;キャッシュヒット率 100% の場合、つまり既にキャッシュされているドメイン名の名前解
+決の場合は以下の通り。&lt;/p&gt;
+&lt;h4 id="statistics"&gt;Statistics:&lt;/h4&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;Queries&lt;/span&gt; &lt;span class="n"&gt;sent&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;         &lt;span class="mi"&gt;214361&lt;/span&gt;
+&lt;span class="n"&gt;Queries&lt;/span&gt; &lt;span class="n"&gt;completed&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;    &lt;span class="mi"&gt;214361&lt;/span&gt;
+&lt;span class="n"&gt;Queries&lt;/span&gt; &lt;span class="n"&gt;lost&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;         &lt;span class="mi"&gt;0&lt;/span&gt;
+&lt;span class="n"&gt;Run&lt;/span&gt; &lt;span class="n"&gt;time&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;s&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;         &lt;span class="mi"&gt;100&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="mi"&gt;000000&lt;/span&gt;
+&lt;span class="n"&gt;Maximum&lt;/span&gt; &lt;span class="n"&gt;throughput&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;   &lt;span class="mi"&gt;8352&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="mi"&gt;000000&lt;/span&gt; &lt;span class="n"&gt;qps&lt;/span&gt;
+&lt;span class="n"&gt;Lost&lt;/span&gt; &lt;span class="k"&gt;at&lt;/span&gt; &lt;span class="n"&gt;that&lt;/span&gt; &lt;span class="n"&gt;point&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;   &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="mi"&gt;26&lt;/span&gt;&lt;span class="o"&gt;%&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h4 id="plots"&gt;Plots&lt;/h4&gt;
+&lt;p&gt;&lt;img alt="rate" src="./images/cachehit100-rate.png"&gt;
+&lt;img alt="latency" src="./images/cachehit100-latency.png"&gt;&lt;/p&gt;
+&lt;h3 id="0"&gt;キャッシュヒット率 0% の場合&lt;/h3&gt;
+&lt;p&gt;キャッシュヒット率 0% の場合、つまり全くキャッシュされていないドメイン名の名前解
+決の場合は以下の通り。&lt;/p&gt;
+&lt;h4 id="statistics_1"&gt;Statistics:&lt;/h4&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;Queries&lt;/span&gt; &lt;span class="n"&gt;sent&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;         &lt;span class="mi"&gt;67845&lt;/span&gt;
+&lt;span class="n"&gt;Queries&lt;/span&gt; &lt;span class="n"&gt;completed&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;    &lt;span class="mi"&gt;67845&lt;/span&gt;
+&lt;span class="n"&gt;Queries&lt;/span&gt; &lt;span class="n"&gt;lost&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;         &lt;span class="mi"&gt;0&lt;/span&gt;
+&lt;span class="n"&gt;Run&lt;/span&gt; &lt;span class="n"&gt;time&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;s&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;         &lt;span class="mi"&gt;100&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="mi"&gt;000000&lt;/span&gt;
+&lt;span class="n"&gt;Maximum&lt;/span&gt; &lt;span class="n"&gt;throughput&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;   &lt;span class="mi"&gt;1374&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="mi"&gt;000000&lt;/span&gt; &lt;span class="n"&gt;qps&lt;/span&gt;
+&lt;span class="n"&gt;Lost&lt;/span&gt; &lt;span class="k"&gt;at&lt;/span&gt; &lt;span class="n"&gt;that&lt;/span&gt; &lt;span class="n"&gt;point&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;   &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="mi"&gt;00&lt;/span&gt;&lt;span class="o"&gt;%&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h4 id="plots_1"&gt;Plots&lt;/h4&gt;
+&lt;p&gt;&lt;img alt="rate" src="./images/cachehit0-rate.png"&gt;
+&lt;img alt="latency" src="./images/cachehit0-latency.png"&gt;&lt;/p&gt;
+&lt;h1 id="_8"&gt;参考資料&lt;/h1&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="http://blog.watercloud.net/article/430549899.html"&gt;Raspberry PiでつくるDNS キャッシュサーバ&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://www.nic.ad.jp/ja/materials/iw/2013/proceedings/d2/d2-hattori.pdf"&gt;DNSの評価と計測の話&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="http://macappstore.org/dnsperf/"&gt;Install dnsperf on Mac OSX&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="http://www.geocities.jp/yasasikukaitou/queryperf.html"&gt;DNS BIND queryperf インストール 設定 利用&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</content><category term="dns"></category><category term="ndjbdns"></category><category term="Mac"></category><category term="dnsperf"></category><category term="resperf"></category><category term="Rasberry Pi2"></category></entry><entry><title>chronyインストールおよび設定手順</title><link href="https://lupinthe14th.github.io/chrony.html" rel="alternate"></link><published>2015-11-30T18:00:00+09:00</published><updated>2015-11-30T18:00:00+09:00</updated><author><name>Hideo Suzuki</name></author><id>tag:lupinthe14th.github.io,2015-11-30:/chrony.html</id><summary type="html">&lt;p&gt;NTPクライアントとNTPサーバーの実装のひとつchronyのインストールと設定&lt;/p&gt;</summary><content type="html">&lt;h1 id="chrony"&gt;chronyインストールおよび設定手順&lt;/h1&gt;
+&lt;p&gt;Rasberry Pi2 (Ubuntu 14.04 arm) へ chrony をインストール。&lt;/p&gt;
+&lt;h2 id="_1"&gt;目的&lt;/h2&gt;
+&lt;p&gt;NTPクライアントおよびローカルネットワークのNTPサーバーとして動作させる。&lt;/p&gt;
+&lt;h2 id="_2"&gt;前提&lt;/h2&gt;
+&lt;p&gt;ハードウェアは、Rasberry Pi2 で、ディストリビューションは、Ubuntu 14.04&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="gp"&gt;$&lt;/span&gt; uname -a
+&lt;span class="go"&gt;Linux ubuntu 3.18.0-25-rpi2 #26-Ubuntu SMP PREEMPT Sun Jul 5 06:46:34 UTC 2015 armv7l armv7l armv7l GNU/Linux&lt;/span&gt;
+&lt;span class="gp"&gt;$&lt;/span&gt; cat /etc/lsb-release
+&lt;span class="go"&gt;DISTRIB_ID=Ubuntu&lt;/span&gt;
+&lt;span class="go"&gt;DISTRIB_RELEASE=14.04&lt;/span&gt;
+&lt;span class="go"&gt;DISTRIB_CODENAME=trusty&lt;/span&gt;
+&lt;span class="go"&gt;DISTRIB_DESCRIPTION=&amp;quot;Ubuntu 14.04.3 LTS&amp;quot;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h1 id="_3"&gt;構築手順&lt;/h1&gt;
+&lt;h2 id="_4"&gt;インストール&lt;/h2&gt;
+&lt;p&gt;&lt;code&gt;apt-get&lt;/code&gt; にてパッケージをインストールする。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="gp"&gt;$&lt;/span&gt; sudo apt-get install chrony
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2 id="_5"&gt;設定&lt;/h2&gt;
+&lt;p&gt;設定ファイルの編集を行う。
+オリジナルとの差分は以下の通り。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;$ diff /etc/chrony/chrony.conf /etc/chrony/chrony.conf.org
+20,24c20,23
+&amp;lt; server ntp.jst.mfeed.ad.jp offline minpoll 8
+&amp;lt; server ntp.nict.jp offline minpoll 8
+&amp;lt; server s2csntp.miz.nao.ac.jp offline minpoll 8
+&amp;lt; server ntp.ring.gr.jp offline minpoll 8
+&amp;lt; server ntp.shoshin.co.jp offline minpoll 8
+&lt;span class="gd"&gt;---&lt;/span&gt;
+&amp;gt; server 0.debian.pool.ntp.org offline minpoll 8
+&amp;gt; server 1.debian.pool.ntp.org offline minpoll 8
+&amp;gt; server 2.debian.pool.ntp.org offline minpoll 8
+&amp;gt; server 3.debian.pool.ntp.org offline minpoll 8
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2 id="_6"&gt;起動&lt;/h2&gt;
+&lt;p&gt;サービスの再起動を行い、ステータスを確認する。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="gp"&gt;$&lt;/span&gt; sudo service chrony restart
+&lt;span class="go"&gt;Restarting time daemon: Starting /usr/sbin/chronyd...&lt;/span&gt;
+&lt;span class="go"&gt;chronyd is running and online.&lt;/span&gt;
+&lt;span class="gp"&gt;$&lt;/span&gt; sudo service chrony status
+&lt;span class="go"&gt; * chronyd is running&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2 id="_7"&gt;同期状況の確認&lt;/h2&gt;
+&lt;p&gt;&lt;code&gt;chronyc&lt;/code&gt; を用いる。(&lt;code&gt;ntpq -p&lt;/code&gt; で確認している内容と同様）&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="gp"&gt;$&lt;/span&gt; chronyc sources
+&lt;span class="go"&gt;210 Number of sources = 5&lt;/span&gt;
+&lt;span class="go"&gt;MS Name/IP address         Stratum Poll Reach LastRx Last sample&lt;/span&gt;
+&lt;span class="go"&gt;===============================================================================&lt;/span&gt;
+&lt;span class="go"&gt;^- ntp3.jst.mfeed.ad.jp          2   8    37   230  -1809us[-1809us] +/-  126ms&lt;/span&gt;
+&lt;span class="go"&gt;^* ntp-b2.nict.go.jp             1   8    37   231   -136us[ -336us] +/-   15ms&lt;/span&gt;
+&lt;span class="go"&gt;^- 133.40.41.136                 2   8    37   230  +2117us[+2117us] +/-   41ms&lt;/span&gt;
+&lt;span class="go"&gt;^+ ring.nict.go.jp               2   8    37   230  -6414us[-6414us] +/-   25ms&lt;/span&gt;
+&lt;span class="go"&gt;^- E210168211231.ec-userreve     1   8    37   231   +902us[ +902us] +/-   18ms&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h1 id="_8"&gt;参考文献&lt;/h1&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="https://www.howtoinstall.co/en/ubuntu/trusty/universe/chrony/"&gt;How to install chrony package in Ubuntu Trusty&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</content><category term="Rasberry Pi2"></category><category term="ubuntu"></category><category term="14.04"></category><category term="trusty"></category><category term="oss"></category><category term="chrony"></category><category term="ntp"></category></entry><entry><title>N-DJBDNS インストールおよび設定手順</title><link href="https://lupinthe14th.github.io/ndjbdns.html" rel="alternate"></link><published>2015-11-23T17:00:00+09:00</published><updated>2015-11-23T17:00:00+09:00</updated><author><name>Hideo Suzuki</name></author><id>tag:lupinthe14th.github.io,2015-11-23:/ndjbdns.html</id><summary type="html">&lt;p&gt;もっともセキュアと言われている N-DJBDNS のインストールと設定&lt;/p&gt;</summary><content type="html">&lt;h1 id="n-djbdns"&gt;N-DJBDNS のインストールおよび設定手順&lt;/h1&gt;
+&lt;p&gt;Rasberry Pi2 (Ubuntu 14.04 arm) へ、もっともセキュアと言われている N-DJBDNS のイ
+ンストールと設定を行います。&lt;/p&gt;
+&lt;h2 id="_1"&gt;目的&lt;/h2&gt;
+&lt;p&gt;以下の構成と基本動作を行う様にインストールと設定を行う。&lt;/p&gt;
+&lt;h3 id="_2"&gt;構成&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;tinydns: コンテンツ管理サーバー&lt;/li&gt;
+&lt;li&gt;dnscache: キャッシュサーバー&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;としてローカルエリアのDNSとして動作させます。&lt;/p&gt;
+&lt;h3 id="_3"&gt;基本動作&lt;/h3&gt;
+&lt;p&gt;それぞれ、以下の動作を基本として設定します。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;tinydns&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;127.0.0.1 で動作させる&lt;/li&gt;
+&lt;li&gt;ローカルドメインのコンテンツ管理サーバー&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;dnscache&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;ローカルエリアからのクエリのみ受け付け&lt;/li&gt;
+&lt;li&gt;ローカルドメインであれば、tinydns へ問い合わせ&lt;/li&gt;
+&lt;li&gt;そうでなければ外部へ再帰検索を行う&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="_4"&gt;前提&lt;/h2&gt;
+&lt;p&gt;この手順の前提のハードウェアは、Rasberry Pi2 で、ディストリビューションは、
+Ubuntu 14.04 を用います。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;$ uname -a
+Linux ubuntu &lt;span class="m"&gt;3&lt;/span&gt;.18.0-25-rpi2 &lt;span class="c1"&gt;#26-Ubuntu SMP PREEMPT Sun Jul 5 06:46:34 UTC 2015 armv7l armv7l armv7l GNU/Linux&lt;/span&gt;
+$ cat /etc/lsb-release
+&lt;span class="nv"&gt;DISTRIB_ID&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;Ubuntu
+&lt;span class="nv"&gt;DISTRIB_RELEASE&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;14&lt;/span&gt;.04
+&lt;span class="nv"&gt;DISTRIB_CODENAME&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;trusty
+&lt;span class="nv"&gt;DISTRIB_DESCRIPTION&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;Ubuntu 14.04.3 LTS&amp;quot;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h1 id="_5"&gt;構築手順&lt;/h1&gt;
+&lt;h2 id="_6"&gt;インストール&lt;/h2&gt;
+&lt;p&gt;以下のコマンドを実行し、必要パッケージも纏めてインストールする。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;$ sudo apt-get install djbdns
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2 id="_7"&gt;設定&lt;/h2&gt;
+&lt;h3 id="_8"&gt;ユーザの追加&lt;/h3&gt;
+&lt;p&gt;必要なユーザーを追加する。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;$ sudo adduser --no-create-home --disabled-login --shell /bin/false dnslog
+$ sudo adduser --no-create-home --disabled-login --shell /bin/false tinydns
+$ sudo adduser --no-create-home --disabled-login --shell /bin/false dnscache
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h3 id="tinydns"&gt;tinydns&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;configuration&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;$ sudo su -
+&lt;span class="c1"&gt;# tinydns-conf tinydns dnslog /etc/tinydns/ 127.0.0.1&lt;/span&gt;
+&lt;span class="c1"&gt;# cd /etc/service ; ln -sf /etc/tinydns/&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;tinydns レコードを追加&lt;/p&gt;
+&lt;p&gt;data ファイルを記述し、&lt;code&gt;tinydns-data&lt;/code&gt; コマンドで、データベースを作成する。&lt;/p&gt;
+&lt;p&gt;localhost.localdomain. をローカルドメインとして管理して名前解決させる。&lt;/p&gt;
+&lt;p&gt;以下、data ファイルの作成例を以下に提示します。&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;data ファイルの作成&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;#&lt;/span&gt; &lt;span class="n"&gt;vi&lt;/span&gt; &lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;etc&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;tinydns&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;root&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="k"&gt;data&lt;/span&gt;
+&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;localhost&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;localdomain&lt;/span&gt;&lt;span class="p"&gt;.::&lt;/span&gt;&lt;span class="n"&gt;ns&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;localhost&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;localdomain&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;
+&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="mi"&gt;168&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="mi"&gt;192&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="k"&gt;in&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;addr&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;arpa&lt;/span&gt;&lt;span class="p"&gt;.::&lt;/span&gt;&lt;span class="n"&gt;ns&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;localhost&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;localdomain&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;
+
+&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;ns&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;localhost&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;localdomain&lt;/span&gt;&lt;span class="p"&gt;.:&lt;/span&gt;&lt;span class="mi"&gt;192&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="mi"&gt;168&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="mi"&gt;7&lt;/span&gt;
+&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;gate&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;localhost&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;localdomain&lt;/span&gt;&lt;span class="p"&gt;.:&lt;/span&gt;&lt;span class="mi"&gt;192&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="mi"&gt;168&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;
+&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;www&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;localhost&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;localdomain&lt;/span&gt;&lt;span class="p"&gt;.:&lt;/span&gt;&lt;span class="mi"&gt;192&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="mi"&gt;168&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="mi"&gt;32&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;tinydns-data&lt;/code&gt; コマンドでデータベースを作成&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;#&lt;/span&gt; &lt;span class="n"&gt;cd&lt;/span&gt; &lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;etc&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;tinydns&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;root&lt;/span&gt;
+&lt;span class="o"&gt;#&lt;/span&gt; &lt;span class="n"&gt;tinydns&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="k"&gt;data&lt;/span&gt;
+&lt;span class="o"&gt;#&lt;/span&gt; &lt;span class="n"&gt;ls&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;al&lt;/span&gt; &lt;span class="k"&gt;data&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;cdb&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id="dnscache"&gt;dnscache&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;confiuration&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;$ sudo su -
+&lt;span class="c1"&gt;# dnscache-conf dnscache dnslog /etc/dnscache 192.168.0.7&lt;/span&gt;
+&lt;span class="c1"&gt;# cd /etc/service ; ln -sf /etc/dnscache/&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;外部キャッシュサーバーのアドレスを設定&lt;/p&gt;
+&lt;p&gt;適宜自環境に合わせ、外部キャッシュサーバーに問い合わせする様に設定します。&lt;/p&gt;
+&lt;p&gt;例として、 OpenDNS を問い合わせ先に設定する場合を記載します。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;#&lt;/span&gt; &lt;span class="n"&gt;echo&lt;/span&gt; &lt;span class="mi"&gt;208&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="mi"&gt;67&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="mi"&gt;222&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="mi"&gt;222&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt; &lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;etc&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;dnscache&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;root&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;servers&lt;/span&gt;&lt;span class="o"&gt;/@&lt;/span&gt;
+&lt;span class="o"&gt;#&lt;/span&gt; &lt;span class="n"&gt;echo&lt;/span&gt; &lt;span class="mi"&gt;208&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="mi"&gt;67&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="mi"&gt;220&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="mi"&gt;220&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;etc&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;dnscache&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;root&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;servers&lt;/span&gt;&lt;span class="o"&gt;/@&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;外部キャッシュサーバーに問い合わせするように設定&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;#&lt;/span&gt; &lt;span class="n"&gt;echo&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt; &lt;span class="o"&gt;&amp;gt;&lt;/span&gt; &lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;etc&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;dnscache&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;env&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;FORWARDONLY&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;ローカルネットワークの接続を許可&lt;/p&gt;
+&lt;p&gt;ローカルネットワーク内（今回は192.168.0.0/16）からのアクセスを許可&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;$ sudo touch /etc/dnscache/root/ip/192.168
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;ローカルドメインとローカルアドレスの問い合わせ先設定&lt;/p&gt;
+&lt;p&gt;localhost.localdomain ローカルドメインと、192.168.0.0/24 のローカルアドレス
+の逆引きは、tinydns に問い合わせするように設定。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;#&lt;/span&gt; &lt;span class="n"&gt;echo&lt;/span&gt; &lt;span class="mi"&gt;127&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;/&lt;/span&gt;&lt;span class="n"&gt;etc&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;service&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;dnscache&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;root&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;servers&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;localhost&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;localdomain&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;
+&lt;span class="o"&gt;#&lt;/span&gt; &lt;span class="n"&gt;echo&lt;/span&gt; &lt;span class="mi"&gt;127&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;/&lt;/span&gt;&lt;span class="n"&gt;etc&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;service&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;dnscache&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;root&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;servers&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="mi"&gt;168&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="mi"&gt;192&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="k"&gt;in&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;addr&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;arpa&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id="_9"&gt;起動&lt;/h2&gt;
+&lt;p&gt;サービスの起動を行い、ステータスを確認する。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;#&lt;/span&gt; &lt;span class="n"&gt;initctl&lt;/span&gt; &lt;span class="k"&gt;start&lt;/span&gt; &lt;span class="n"&gt;svscan&lt;/span&gt;
+&lt;span class="n"&gt;svscan&lt;/span&gt; &lt;span class="k"&gt;start&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;running&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;process&lt;/span&gt; &lt;span class="mi"&gt;1612&lt;/span&gt;
+&lt;span class="o"&gt;#&lt;/span&gt; &lt;span class="n"&gt;svstat&lt;/span&gt; &lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;etc&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;service&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;tinydns&lt;/span&gt;
+&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;etc&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;service&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;tinydns&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;up&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;pid&lt;/span&gt; &lt;span class="mi"&gt;1619&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="mi"&gt;31&lt;/span&gt; &lt;span class="n"&gt;seconds&lt;/span&gt;
+&lt;span class="o"&gt;#&lt;/span&gt; &lt;span class="n"&gt;svstat&lt;/span&gt; &lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;etc&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;service&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;dnscache&lt;/span&gt;
+&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;etc&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;service&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;dnscache&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;up&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;pid&lt;/span&gt; &lt;span class="mi"&gt;2133&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="mi"&gt;11&lt;/span&gt; &lt;span class="n"&gt;seconds&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2 id="_10"&gt;個別のサービス起動・停止方法&lt;/h2&gt;
+&lt;p&gt;tinydns, dnscache のサービスを個別に開始・停止する場合は以下のコマンドを実行す
+る。&lt;/p&gt;
+&lt;h3 id="tinydns_1"&gt;tinydns&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;start&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;$ sudo svc -u /etc/service/tinydns
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;stop&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;$ sudo svc -d /etc/service/tinydns
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="dnscache_1"&gt;dnscache&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;start&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;$ sudo svc -u /etc/service/dnscache
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;stop&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;$ sudo svc -d /etc/service/dnscache
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h1 id="_11"&gt;参考文献&lt;/h1&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="http://ubuntuforums.org/showthread.php?t=1630044"&gt;DJBDNS (TinyDNS) Install From Packages&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="http://qiita.com/metheglin/items/01d3334c19ca559e25cf"&gt;djbdnsでローカルドメインの名前解決をおこなう&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</content><category term="Rasberry Pi2"></category><category term="ubuntu"></category><category term="14.04"></category><category term="trusty"></category><category term="N-DJBDNS"></category><category term="djbdns"></category><category term="oss"></category><category term="dnscache"></category><category term="tinydns"></category></entry></feed>

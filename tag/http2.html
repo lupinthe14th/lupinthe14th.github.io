@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="ja" prefix="og: http://ogp.me/ns# fb: https://www.facebook.com/2008/fbml">
+<head>
+    <title>http2 - engineering note</title>
+    <!-- Using the latest rendering mode for IE -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+
+
+    <meta name="author" content="Hideo Suzuki" />
+    <meta name="keywords" content="http2" />
+
+    <!-- Open Graph tags -->
+            <meta property="fb:app_id" content="925856150831958"/>
+        <meta property="og:site_name" content="engineering note" />
+        <meta property="og:type" content="website"/>
+        <meta property="og:title" content="engineering note"/>
+        <meta property="og:url" content="https://lupinthe14th.github.io"/>
+        <meta property="og:description" content="engineering note"/>
+
+    <meta name="twitter:dnt" content="on">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:domain" content="https://lupinthe14th.github.io">
+
+
+    <!-- Bootstrap -->
+        <link rel="stylesheet" href="https://lupinthe14th.github.io/theme/css/bootstrap.min.css" type="text/css"/>
+    <link href="https://lupinthe14th.github.io/theme/css/font-awesome.min.css" rel="stylesheet">
+
+    <link href="https://lupinthe14th.github.io/theme/css/pygments/zenburn.css" rel="stylesheet">
+    <link href="https://lupinthe14th.github.io/theme/tipuesearch/tipuesearch.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://lupinthe14th.github.io/theme/css/style.css" type="text/css"/>
+        <link href="https://lupinthe14th.github.io/static/custom.css" rel="stylesheet">
+
+        <link href="https://lupinthe14th.github.io/feeds/all.atom.xml" type="application/atom+xml" rel="alternate"
+              title="engineering note ATOM Feed"/>
+
+
+</head>
+<body>
+
+<div class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a href="https://lupinthe14th.github.io/" class="navbar-brand">
+engineering note            </a>
+        </div>
+        <div class="collapse navbar-collapse navbar-ex1-collapse">
+            <ul class="nav navbar-nav">
+                        <li >
+                            <a href="https://lupinthe14th.github.io/category/archlinux.html">Archlinux</a>
+                        </li>
+                        <li >
+                            <a href="https://lupinthe14th.github.io/category/diy.html">Diy</a>
+                        </li>
+                        <li >
+                            <a href="https://lupinthe14th.github.io/category/memo.html">Memo</a>
+                        </li>
+                        <li >
+                            <a href="https://lupinthe14th.github.io/category/misc.html">Misc</a>
+                        </li>
+                        <li >
+                            <a href="https://lupinthe14th.github.io/category/rasberry-pi.html">Rasberry pi</a>
+                        </li>
+                        <li >
+                            <a href="https://lupinthe14th.github.io/category/security.html">Security</a>
+                        </li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+              <li><span>
+                <form class="navbar-search" action="/search.html">
+                  <input type="text" class="search-query" placeholder="Search" name="q" id="tipue_search_input" required>
+                </form></span>
+              </li>
+            </ul>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+</div> <!-- /.navbar -->
+
+<!-- Banner -->
+<!-- End Banner -->
+
+<!-- Content Container -->
+<div class="container">
+    <div class="row">
+        <div class="col-sm-9">
+            <article>
+                <h2><a href="https://lupinthe14th.github.io/nghttpd-http2.html">nghttpd HTTP/2 お試し</a></h2>
+                <div class="summary"><p>C言語のHTTP/2 server の実装の一つ、 nghttpd を試しに構築してベンチマークを取得してみる。</p>
+<p><small><a href="https://lupinthe14th.github.io/nghttpd-http2.html#disqus_thread" >View comments</a>.</small></p>                    <a class="btn btn-default btn-xs" href="https://lupinthe14th.github.io/nghttpd-http2.html">more ...</a>
+                </div>
+            </article>
+            <hr/>
+            <article>
+                <h2><a href="https://lupinthe14th.github.io/h2o-http2.html">H2O HTTP/2 お試し</a></h2>
+                <div class="summary"><p>HTTP/1.x HTTP/2 に最適化された Web サーバーの実装の一つ、H2O を試しに構築してベンチマークを取得してみる。</p>
+<p><small><a href="https://lupinthe14th.github.io/h2o-http2.html#disqus_thread" >View comments</a>.</small></p>                    <a class="btn btn-default btn-xs" href="https://lupinthe14th.github.io/h2o-http2.html">more ...</a>
+                </div>
+            </article>
+            <hr/>
+            <article>
+                <h2><a href="https://lupinthe14th.github.io/nginx-http2.html">nginx HTTP/2 お試し</a></h2>
+                <div class="summary"><p>nginx 1.9.5 で HTTP/2 がサポートされたので試しに構築してベンチマーク取</p>
+<p><small><a href="https://lupinthe14th.github.io/nginx-http2.html#disqus_thread" >View comments</a>.</small></p>                    <a class="btn btn-default btn-xs" href="https://lupinthe14th.github.io/nginx-http2.html">more ...</a>
+                </div>
+            </article>
+            <hr/>
+
+        </div>
+        <div class="col-sm-3" id="sidebar">
+            <aside>
+<!-- Sidebar -->
+<section class="well well-sm">
+  <ul class="list-group list-group-flush">
+
+<!-- Sidebar/Social -->
+<li class="list-group-item">
+  <h4><i class="fa fa-home fa-lg"></i><span class="icon-label">Social</span></h4>
+  <ul class="list-group" id="social">
+    <li class="list-group-item"><a href="https://twitter.com/hideosuzuki2"><i class="fa fa-twitter-square fa-lg"></i> twitter</a></li>
+    <li class="list-group-item"><a href="https://www.facebook.com/hideo.suzukithe13th"><i class="fa fa-facebook-square fa-lg"></i> facebook</a></li>
+    <li class="list-group-item"><a href="https://github.com/lupinthe14th"><i class="fa fa-github-square fa-lg"></i> github</a></li>
+  </ul>
+</li>
+<!-- End Sidebar/Social -->
+
+<!-- Sidebar/Recent Posts -->
+<li class="list-group-item">
+  <h4><i class="fa fa-home fa-lg"></i><span class="icon-label">Recent Posts</span></h4>
+  <ul class="list-group" id="recentposts">
+    <li class="list-group-item"><a href="https://lupinthe14th.github.io/nghttpd-http2.html">nghttpd HTTP/2 お試し</a></li>
+  </ul>
+</li>
+<!-- End Sidebar/Recent Posts -->
+
+<!-- Sidebar/Categories -->
+<li class="list-group-item">
+  <h4><i class="fa fa-home fa-lg"></i><span class="icon-label">Categories</span></h4>
+  <ul class="list-group" id="categories">
+    <li class="list-group-item">
+      <a href="https://lupinthe14th.github.io/category/archlinux.html"><i class="fa fa-folder-open fa-lg"></i>ArchLinux</a>
+    </li>
+    <li class="list-group-item">
+      <a href="https://lupinthe14th.github.io/category/diy.html"><i class="fa fa-folder-open fa-lg"></i>DIY</a>
+    </li>
+    <li class="list-group-item">
+      <a href="https://lupinthe14th.github.io/category/memo.html"><i class="fa fa-folder-open fa-lg"></i>memo</a>
+    </li>
+    <li class="list-group-item">
+      <a href="https://lupinthe14th.github.io/category/misc.html"><i class="fa fa-folder-open fa-lg"></i>misc</a>
+    </li>
+    <li class="list-group-item">
+      <a href="https://lupinthe14th.github.io/category/rasberry-pi.html"><i class="fa fa-folder-open fa-lg"></i>Rasberry Pi</a>
+    </li>
+    <li class="list-group-item">
+      <a href="https://lupinthe14th.github.io/category/security.html"><i class="fa fa-folder-open fa-lg"></i>security</a>
+    </li>
+  </ul>
+</li>
+<!-- End Sidebar/Categories -->
+
+<!-- Sidebar/Tag Cloud -->
+<li class="list-group-item">
+  <a href="https://lupinthe14th.github.io/"><h4><i class="fa fa-tags fa-lg"></i><span class="icon-label">Tags</span></h4></a>
+  <ul class="list-group list-inline tagcloud" id="tags">
+    <li class="list-group-item tag-2">
+      <a href="https://lupinthe14th.github.io/tag/1404.html">14.04</a>
+    </li>
+    <li class="list-group-item tag-4">
+      <a href="https://lupinthe14th.github.io/tag/alcohol-stove.html">Alcohol Stove</a>
+    </li>
+    <li class="list-group-item tag-4">
+      <a href="https://lupinthe14th.github.io/tag/anti-virus.html">Anti-virus</a>
+    </li>
+    <li class="list-group-item tag-4">
+      <a href="https://lupinthe14th.github.io/tag/archlinux.html">archlinux</a>
+    </li>
+    <li class="list-group-item tag-2">
+      <a href="https://lupinthe14th.github.io/tag/arm-linux-arm.html">Arm Linux ARM</a>
+    </li>
+    <li class="list-group-item tag-2">
+      <a href="https://lupinthe14th.github.io/tag/au.html">au</a>
+    </li>
+    <li class="list-group-item tag-2">
+      <a href="https://lupinthe14th.github.io/tag/aws.html">aws</a>
+    </li>
+    <li class="list-group-item tag-4">
+      <a href="https://lupinthe14th.github.io/tag/bai-romu.html">白ロム</a>
+    </li>
+    <li class="list-group-item tag-2">
+      <a href="https://lupinthe14th.github.io/tag/benchmark.html">benchmark</a>
+    </li>
+    <li class="list-group-item tag-4">
+      <a href="https://lupinthe14th.github.io/tag/blog.html">blog</a>
+    </li>
+    <li class="list-group-item tag-4">
+      <a href="https://lupinthe14th.github.io/tag/chrony.html">chrony</a>
+    </li>
+    <li class="list-group-item tag-4">
+      <a href="https://lupinthe14th.github.io/tag/console.html">Console</a>
+    </li>
+    <li class="list-group-item tag-4">
+      <a href="https://lupinthe14th.github.io/tag/detasim.html">データSIM</a>
+    </li>
+    <li class="list-group-item tag-4">
+      <a href="https://lupinthe14th.github.io/tag/diy.html">DIY</a>
+    </li>
+    <li class="list-group-item tag-4">
+      <a href="https://lupinthe14th.github.io/tag/djbdns.html">djbdns</a>
+    </li>
+    <li class="list-group-item tag-4">
+      <a href="https://lupinthe14th.github.io/tag/dns.html">dns</a>
+    </li>
+    <li class="list-group-item tag-4">
+      <a href="https://lupinthe14th.github.io/tag/dnscache.html">dnscache</a>
+    </li>
+    <li class="list-group-item tag-4">
+      <a href="https://lupinthe14th.github.io/tag/dnsperf.html">dnsperf</a>
+    </li>
+    <li class="list-group-item tag-4">
+      <a href="https://lupinthe14th.github.io/tag/e10k.html">E10K</a>
+    </li>
+    <li class="list-group-item tag-4">
+      <a href="https://lupinthe14th.github.io/tag/ext4.html">ext4</a>
+    </li>
+    <li class="list-group-item tag-4">
+      <a href="https://lupinthe14th.github.io/tag/fdisk.html">fdisk</a>
+    </li>
+    <li class="list-group-item tag-4">
+      <a href="https://lupinthe14th.github.io/tag/git.html">git</a>
+    </li>
+    <li class="list-group-item tag-4">
+      <a href="https://lupinthe14th.github.io/tag/github.html">Github</a>
+    </li>
+    <li class="list-group-item tag-4">
+      <a href="https://lupinthe14th.github.io/tag/github-page.html">Github Page</a>
+    </li>
+    <li class="list-group-item tag-4">
+      <a href="https://lupinthe14th.github.io/tag/growpart.html">growpart</a>
+    </li>
+    <li class="list-group-item tag-4">
+      <a href="https://lupinthe14th.github.io/tag/gvim.html">gvim</a>
+    </li>
+    <li class="list-group-item tag-2">
+      <a href="https://lupinthe14th.github.io/tag/h2load.html">h2load</a>
+    </li>
+    <li class="list-group-item tag-4">
+      <a href="https://lupinthe14th.github.io/tag/h2o.html">h2o</a>
+    </li>
+    <li class="list-group-item tag-2">
+      <a href="https://lupinthe14th.github.io/tag/http2.html">http2</a>
+    </li>
+    <li class="list-group-item tag-2">
+      <a href="https://lupinthe14th.github.io/tag/hyper-v-2012-r2.html">Hyper-V 2012 R2</a>
+    </li>
+    <li class="list-group-item tag-4">
+      <a href="https://lupinthe14th.github.io/tag/ios-921.html">iOS 9.2.1</a>
+    </li>
+    <li class="list-group-item tag-4">
+      <a href="https://lupinthe14th.github.io/tag/ios-935.html">iOS 9.3.5</a>
+    </li>
+    <li class="list-group-item tag-4">
+      <a href="https://lupinthe14th.github.io/tag/ios1002.html">iOS10.0.2</a>
+    </li>
+    <li class="list-group-item tag-2">
+      <a href="https://lupinthe14th.github.io/tag/ipad-air2.html">iPad Air2</a>
+    </li>
+    <li class="list-group-item tag-4">
+      <a href="https://lupinthe14th.github.io/tag/iphone5s.html">iPhone5s</a>
+    </li>
+    <li class="list-group-item tag-4">
+      <a href="https://lupinthe14th.github.io/tag/lenovo.html">Lenovo</a>
+    </li>
+    <li class="list-group-item tag-2">
+      <a href="https://lupinthe14th.github.io/tag/lubuntu.html">lubuntu</a>
+    </li>
+    <li class="list-group-item tag-4">
+      <a href="https://lupinthe14th.github.io/tag/lubuntu-14042-lts.html">lubuntu 14.04.2 LTS</a>
+    </li>
+    <li class="list-group-item tag-2">
+      <a href="https://lupinthe14th.github.io/tag/mac.html">Mac</a>
+    </li>
+    <li class="list-group-item tag-4">
+      <a href="https://lupinthe14th.github.io/tag/mac-os-x.html">Mac OS X</a>
+    </li>
+    <li class="list-group-item tag-4">
+      <a href="https://lupinthe14th.github.io/tag/malware.html">malware</a>
+    </li>
+    <li class="list-group-item tag-4">
+      <a href="https://lupinthe14th.github.io/tag/mastodon.html">mastodon</a>
+    </li>
+    <li class="list-group-item tag-4">
+      <a href="https://lupinthe14th.github.io/tag/mdadm.html">mdadm</a>
+    </li>
+    <li class="list-group-item tag-4">
+      <a href="https://lupinthe14th.github.io/tag/memo.html">memo</a>
+    </li>
+    <li class="list-group-item tag-4">
+      <a href="https://lupinthe14th.github.io/tag/mineo.html">mineo</a>
+    </li>
+    <li class="list-group-item tag-2">
+      <a href="https://lupinthe14th.github.io/tag/mvno.html">MVNO</a>
+    </li>
+    <li class="list-group-item tag-4">
+      <a href="https://lupinthe14th.github.io/tag/n-djbdns.html">N-DJBDNS</a>
+    </li>
+    <li class="list-group-item tag-4">
+      <a href="https://lupinthe14th.github.io/tag/ndjbdns.html">ndjbdns</a>
+    </li>
+    <li class="list-group-item tag-4">
+      <a href="https://lupinthe14th.github.io/tag/netctl.html">netctl</a>
+    </li>
+    <li class="list-group-item tag-4">
+      <a href="https://lupinthe14th.github.io/tag/nghttp2.html">nghttp2</a>
+    </li>
+    <li class="list-group-item tag-4">
+      <a href="https://lupinthe14th.github.io/tag/nghttpd.html">nghttpd</a>
+    </li>
+    <li class="list-group-item tag-4">
+      <a href="https://lupinthe14th.github.io/tag/nginx.html">nginx</a>
+    </li>
+    <li class="list-group-item tag-4">
+      <a href="https://lupinthe14th.github.io/tag/npm.html">npm</a>
+    </li>
+    <li class="list-group-item tag-4">
+      <a href="https://lupinthe14th.github.io/tag/ntp.html">ntp</a>
+    </li>
+    <li class="list-group-item tag-2">
+      <a href="https://lupinthe14th.github.io/tag/oss.html">oss</a>
+    </li>
+    <li class="list-group-item tag-4">
+      <a href="https://lupinthe14th.github.io/tag/outdoor.html">Outdoor</a>
+    </li>
+    <li class="list-group-item tag-4">
+      <a href="https://lupinthe14th.github.io/tag/pacman.html">pacman</a>
+    </li>
+    <li class="list-group-item tag-4">
+      <a href="https://lupinthe14th.github.io/tag/pelican.html">pelican</a>
+    </li>
+    <li class="list-group-item tag-4">
+      <a href="https://lupinthe14th.github.io/tag/python.html">python</a>
+    </li>
+    <li class="list-group-item tag-4">
+      <a href="https://lupinthe14th.github.io/tag/raid.html">raid</a>
+    </li>
+    <li class="list-group-item tag-4">
+      <a href="https://lupinthe14th.github.io/tag/raid1.html">raid1</a>
+    </li>
+    <li class="list-group-item tag-0">
+      <a href="https://lupinthe14th.github.io/tag/rasberry-pi2.html">Rasberry Pi2</a>
+    </li>
+    <li class="list-group-item tag-4">
+      <a href="https://lupinthe14th.github.io/tag/resize2fs.html">resize2fs</a>
+    </li>
+    <li class="list-group-item tag-4">
+      <a href="https://lupinthe14th.github.io/tag/resperf.html">resperf</a>
+    </li>
+    <li class="list-group-item tag-4">
+      <a href="https://lupinthe14th.github.io/tag/shiriaru.html">シリアル</a>
+    </li>
+    <li class="list-group-item tag-4">
+      <a href="https://lupinthe14th.github.io/tag/sms.html">SMS</a>
+    </li>
+    <li class="list-group-item tag-4">
+      <a href="https://lupinthe14th.github.io/tag/sophos.html">Sophos</a>
+    </li>
+    <li class="list-group-item tag-4">
+      <a href="https://lupinthe14th.github.io/tag/sphinx.html">Sphinx</a>
+    </li>
+    <li class="list-group-item tag-4">
+      <a href="https://lupinthe14th.github.io/tag/ssh.html">SSH</a>
+    </li>
+    <li class="list-group-item tag-4">
+      <a href="https://lupinthe14th.github.io/tag/sysctl.html">sysctl</a>
+    </li>
+    <li class="list-group-item tag-2">
+      <a href="https://lupinthe14th.github.io/tag/systemworks.html">Systemworks</a>
+    </li>
+    <li class="list-group-item tag-4">
+      <a href="https://lupinthe14th.github.io/tag/tinydns.html">tinydns</a>
+    </li>
+    <li class="list-group-item tag-4">
+      <a href="https://lupinthe14th.github.io/tag/tmux.html">tmux</a>
+    </li>
+    <li class="list-group-item tag-2">
+      <a href="https://lupinthe14th.github.io/tag/trusty.html">trusty</a>
+    </li>
+    <li class="list-group-item tag-1">
+      <a href="https://lupinthe14th.github.io/tag/ubuntu.html">Ubuntu</a>
+    </li>
+    <li class="list-group-item tag-4">
+      <a href="https://lupinthe14th.github.io/tag/uq-mobile.html">UQ mobile</a>
+    </li>
+    <li class="list-group-item tag-4">
+      <a href="https://lupinthe14th.github.io/tag/usb-boot.html">USB boot</a>
+    </li>
+    <li class="list-group-item tag-2">
+      <a href="https://lupinthe14th.github.io/tag/usb-hdd.html">USB-HDD</a>
+    </li>
+    <li class="list-group-item tag-4">
+      <a href="https://lupinthe14th.github.io/tag/usbshiriarukeburu.html">USBシリアルケーブル</a>
+    </li>
+    <li class="list-group-item tag-4">
+      <a href="https://lupinthe14th.github.io/tag/web-category-access.html">Web Category Access</a>
+    </li>
+    <li class="list-group-item tag-4">
+      <a href="https://lupinthe14th.github.io/tag/web-protection.html">Web Protection</a>
+    </li>
+    <li class="list-group-item tag-4">
+      <a href="https://lupinthe14th.github.io/tag/yarn.html">yarn</a>
+    </li>
+  </ul>
+</li>
+<!-- End Sidebar/Tag Cloud -->
+
+<!-- Sidebar/Links -->
+<li class="list-group-item">
+  <h4><i class="fa fa-external-link-square fa-lg"></i><span class="icon-label">Links</span></h4>
+  <ul class="list-group" id="links">
+    <li class="list-group-item">
+      <a href="https://running-climbing.tumblr.com" target="_blank">running & climbing</a>
+    </li>
+  </ul>
+</li>
+<!-- End Sidebar/Links -->
+  </ul>
+</section>
+<!-- End Sidebar -->            </aside>
+        </div>
+    </div>
+</div>
+<!-- End Content Container -->
+
+<footer>
+   <div class="container">
+      <hr>
+      <div class="row">
+         <div class="col-xs-10">&copy; 2015 Hideo Suzuki
+            &middot; Powered by <a href="https://github.com/getpelican/pelican-themes/tree/master/pelican-bootstrap3" target="_blank">pelican-bootstrap3</a>,
+            <a href="http://docs.getpelican.com/" target="_blank">Pelican</a>,
+            <a href="http://getbootstrap.com" target="_blank">Bootstrap</a>                <p><small>  <a rel="license" href="https://creativecommons.org/licenses/by/4.0/deed.ja"><img alt="Creative Commons License" style="border-width:0" src="//i.creativecommons.org/l/by/4.0/80x15.png" /></a>
+    Content
+  licensed under a <a rel="license" href="https://creativecommons.org/licenses/by/4.0/deed.ja">Creative Commons Attribution 4.0 International License</a>, except where indicated otherwise.
+</small></p>
+         </div>
+         <div class="col-xs-2"><p class="pull-right"><i class="fa fa-arrow-up"></i> <a href="#">Back to top</a></p></div>
+      </div>
+   </div>
+</footer>
+<script src="https://lupinthe14th.github.io/theme/js/jquery.min.js"></script>
+
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="https://lupinthe14th.github.io/theme/js/bootstrap.min.js"></script>
+
+<!-- Enable responsive features in IE8 with Respond.js (https://github.com/scottjehl/Respond) -->
+<script src="https://lupinthe14th.github.io/theme/js/respond.min.js"></script>
+
+
+    <!-- Disqus -->
+    <script type="text/javascript">
+        /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+        var disqus_shortname = 'engineeringnote'; // required: replace example with your forum shortname
+
+        /* * * DON'T EDIT BELOW THIS LINE * * */
+        (function () {
+            var s = document.createElement('script');
+            s.async = true;
+            s.type = 'text/javascript';
+            s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+            (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+        }());
+    </script>
+    <!-- End Disqus Code -->
+    <!-- Google Analytics Universal -->
+    <script type="text/javascript">
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+        ga('create', 'UA-70443206-1', 'auto');
+        ga('send', 'pageview');
+    </script>
+    <!-- End Google Analytics Universal Code -->
+
+
+</body>
+</html>
