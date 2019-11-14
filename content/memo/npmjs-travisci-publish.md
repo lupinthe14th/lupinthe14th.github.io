@@ -16,7 +16,7 @@ Summary: npm package の継続的リリース作業をTravis ci使って自動�
 
 `.travis.yml` のbranchesの定義を追加した為、動かなかった。動くよう修正したのは以下。
 
-```yaml:.travis.yml
+```
 ---
 language: node_js
 node_js:
@@ -57,7 +57,7 @@ jobs:
           tags: true
 ```
 
-```console
+```
 git commit
 yarn version
 git push origin master --tag
