@@ -66,6 +66,7 @@ PLUGINS = [
     'tag_cloud',
     'tipue_search',
     'i18n_subsites',
+    'render_math',
 ]
 I18N_TEMPLATES_LANG = 'ja'
 
@@ -98,8 +99,8 @@ OPEN_GRAPH_FB_APP_ID = '925856150831958'
 TWITTER_CARDS = True
 
 # Twitter Timeline
-# TWITTER_USERNAME = 'hideosuzuki2'
-# TWITTER_WIDGET_ID = '667706264785281024'
+TWITTER_USERNAME = 'hideosuzuki2'
+TWITTER_WIDGET_ID = '667706264785281024'
 
 # Amazon affiliate
 AMAZON_AD_TAG = 'lupinthe14t05-22'
