@@ -2,7 +2,7 @@ fibonacci
 ################################################################################
 
 :Date: 2019-12-02 18:35
-:Modified: 2019-12-02 19:00
+:Modified: 2019-12-02 22:31
 :Category: memo
 :Tags: go, golang, memo, algorthms, dynamic programming, recursion
 :Author: Hideo Suzuki
@@ -199,3 +199,4 @@ SeeAlso
 
 - `世界で闘うプログラミング力を鍛える本 ~コーディング面接189問とその解法~ <https://www.amazon.co.jp/dp/4839960100/ref=cm_sw_em_r_mt_dp_U_USo5Db4M1J5P3>`_
 - `フィボナッチ数 - 高精度計算サイト <https://keisan.casio.jp/exec/system/1161228773>`_
+- `Big Integers in Go language: a developer’s Reference for Printing, Converting and Serializing <https://medium.com/orbs-network/big-integers-in-go-14534d0e490d>`_
